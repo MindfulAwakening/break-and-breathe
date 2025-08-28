@@ -1,18 +1,15 @@
-# Break & Breathe — MVP v2
+# Break & Breathe — v2.1
 
-Adds **Work Hours + Break Reminders + Stretch Prompt + Voice/Chime** to the original MVP.
+Fixes:
+- Buttons not clickable (z-index / layering)
+- Pacer box too tall (max-height: 80vh)
+- Robust JS initialization (DOMContentLoaded + try/catch)
 
-## Quick Start
-Open `index.html` locally or deploy to GitHub Pages (Settings → Pages → Deploy from a branch → `main` / root).
+Features kept:
+- Work Hours window & recurring breaks
+- Stretch pre-alert before break
+- Voice/Chime reminders
+- 10–30 minute breathing timer with Hong–Sau / Equal / Box / 4‑7‑8
+- PWA offline support
 
-## How to Use
-1) Set your **work hours** and **break cadence**.  
-2) Choose **Reminder style** (Voice, Chime, or Both).  
-3) Click **Start Workday** and keep the tab open.  
-4) At stretch time you’ll hear “Time to stand and stretch.”  
-5) At break time you’ll hear “Break time. Stand, stretch, then begin your breathing practice.”
-
-## Notes
-- Voice uses the **Web Speech API**; chime uses **WebAudio**. Some browsers require a user gesture (click Start Workday) before audio plays.
-- Settings persist in localStorage.
-- PWA files included for offline support.
+Deploy: upload files to GitHub repo root and enable GitHub Pages.

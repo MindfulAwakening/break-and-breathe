@@ -1,5 +1,5 @@
-// Basic offline cache for GitHub Pages
-const CACHE = 'break-breathe-v2';
+// Cache for offline support
+const CACHE = 'break-breathe-v2-1';
 const ASSETS = ['./','./index.html','./manifest.webmanifest'];
 
 self.addEventListener('install', (e) => {
