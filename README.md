@@ -1,15 +1,12 @@
-# Break & Breathe — v2.1
+# Break & Breathe — v2.3
 
-Fixes:
-- Buttons not clickable (z-index / layering)
-- Pacer box too tall (max-height: 80vh)
-- Robust JS initialization (DOMContentLoaded + try/catch)
+### New
+- Voice Settings panel with **Rate**, **Pitch**, and **Volume** sliders (persisted).
+- Guided Voice + reminder announcements now honor your settings.
 
-Features kept:
-- Work Hours window & recurring breaks
-- Stretch pre-alert before break
-- Voice/Chime reminders
-- 10–30 minute breathing timer with Hong–Sau / Equal / Box / 4‑7‑8
-- PWA offline support
+### Keep
+- Work Hours window, recurring breaks, stretch pre-alert
+- Test announcement: “It is time to take a break.”
+- Hong–Sau / Equal / Box / 4–7–8 timer, PWA offline
 
-Deploy: upload files to GitHub repo root and enable GitHub Pages.
+Upload files to your GitHub repo root and enable GitHub Pages.
