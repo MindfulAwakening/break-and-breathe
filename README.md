@@ -1,8 +1,9 @@
-# Break & Breathe — v2.5
+# Break & Breathe — v2.6
 
 ### Fixes
-- Top buttons not clickable: raised `z-index` for header/controls so nothing overlaps.
-- Voice picker reliability: multiple retries, 'Reload Voices' button, and loading triggered on first user click (Safari quirk).
+- **Clicks blocked**: pacer area is now `pointer-events: none`, so header/controls are always clickable.
+- **Chrome voices silent**: added explicit **Unlock Audio** button, improved voice loading/polling, removed over-aggressive cancel, and added **Use Default Voice** fallback.
+- **Voice status**: shows how many voices were loaded.
 
 ### Keep
 - Voice picker + quick female/male pick
