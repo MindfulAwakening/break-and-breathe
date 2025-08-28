@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Break & Breathe — Timed Meditation Breaks (v2.4)</title>
-<meta name="description" content="Timed meditation breaks with guided voice, voice controls, work hours scheduling, stretch prompts, and customizable voices.">
+<title>Break & Breathe — Timed Meditation Breaks (v2.5)</title>
+<meta name="description" content="Timed meditation breaks with guided voice, voice controls, work hours scheduling, stretch prompts, customizable voices, and robust Safari support.">
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#0b1324">
 <style>
@@ -23,13 +23,13 @@
   }
   .app{width:100%;max-width:1240px;backdrop-filter:blur(8px)}
   .card{background:linear-gradient(180deg, rgba(18,28,52,0.9), rgba(13,20,38,0.92));border:1px solid rgba(255,255,255,0.06);border-radius:16px;padding:16px;box-shadow:0 8px 24px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.04)}
-  header{display:flex;gap:12px;align-items:center;justify-content:space-between;margin-bottom:8px}
+  header{position:relative;z-index:5;display:flex;gap:12px;align-items:center;justify-content:space-between;margin-bottom:8px}
   .title{font-weight:700;font-size:clamp(18px,3.6vw,26px);letter-spacing:.2px;display:flex;align-items:center;gap:10px}
   .badge{font-size:12px;padding:2px 8px;border-radius:999px;background:rgba(138,209,255,.12);color:var(--accent);border:1px solid rgba(138,209,255,.25)}
   .muted{color:var(--muted);font-size:12px}
   /* Always horizontal layout */
   .grid{display:grid;gap:12px;grid-template-columns:1.2fr .9fr;align-items:stretch}
-  .controls{display:grid;grid-template-columns:1.2fr 1fr 1.1fr 1fr;gap:12px;margin:8px 0 6px}
+  .controls{position:relative;z-index:5;display:grid;grid-template-columns:1.2fr 1fr 1.1fr 1fr;gap:12px;margin:8px 0 6px}
   @media (max-width:820px){ .controls{grid-template-columns:1fr 1fr; } .grid{grid-template-columns:1fr; } }
   label{font-size:12px;color:var(--muted);display:block;margin-bottom:6px}
   select,input[type="range"],input[type="time"],input[type="number"],.btn{
@@ -69,7 +69,7 @@
   <div class="app">
     <div class="card">
       <header>
-        <div class="title">🧘‍♂️ Break &amp; Breathe <span class="badge">MVP v2.4</span></div>
+        <div class="title">🧘‍♂️ Break &amp; Breathe <span class="badge">MVP v2.5</span></div>
         <div class="muted">Space = start/pause · R = reset</div>
       </header>
 
@@ -211,10 +211,11 @@
                 <label>&nbsp;</label>
                 <div class="row">
                   <button id="saySample" class="btn ghost">🔊 Try Sample</button>
+                  <button id="reloadVoices" class="btn ghost">↻ Reload Voices</button>
                 </div>
               </div>
             </div>
-            <p class="muted" style="margin-top:8px">Note: Available voices vary by browser/OS. Safari on iOS offers fewer voices.</p>
+            <p class="muted" style="margin-top:8px">Note: Available voices vary by browser/OS. Safari on iOS offers fewer voices and may require a button click first.</p>
           </div>
 
           <div class="section">
@@ -275,13 +276,14 @@ try{
   const voicePitch = document.getElementById('voicePitch'); const pitchLbl = document.getElementById('pitchLbl');
   const voiceVol = document.getElementById('voiceVol'); const volLbl = document.getElementById('volLbl');
   const saySample = document.getElementById('saySample');
+  const reloadVoicesBtn = document.getElementById('reloadVoices');
 
   // State
   let running=false, sessionSeconds=parseInt(durationEl.value,10)*60, remaining=sessionSeconds, lastTick=null;
   let phase='ready', phaseRemaining=0, pattern=[];
   let soundOn=false, mantraOn=true, guidedOn=true;
   let workActive=false, nextBreakAt=null, nextStretchAt=null, schedulerTimer=null;
-  let voices=[], selectedVoiceName=null;
+  let voices=[], selectedVoiceName=null, voicesReady=false, firstUserGesture=false;
 
   // Persistence
   const STORE = {
@@ -409,68 +411,94 @@ try{
     if(nextBreakAt && now>=nextBreakAt){ announce('It is time to take a break.'); scheduleNextBreak(now); }
   }
 
-  // Voice list population
+  // Voice list population (robust)
   function guessGender(name){
-    const n = (name||'').toLowerCase();
-    const fem = ['samantha','victoria','karen','moira','susan','fiona','vicki','ellie','zira','zira','joanna','olivia','amy','emma','sara','sarah','luna','natalie','salli'];
-    const male = ['alex','daniel','fred','leo','mike','michael','john','brian','ryan','liam','arthur','tom','joey','justin','matthew'];
+    const n=(name||'').toLowerCase();
+    const fem=['samantha','victoria','karen','moira','susan','fiona','vicki','ellie','zira','joanna','olivia','amy','emma','sara','salli'];
+    const male=['alex','daniel','fred','michael','john','brian','ryan','liam','arthur','tom','joey','justin','matthew'];
     if(fem.some(x=>n.includes(x))) return '♀';
     if(male.some(x=>n.includes(x))) return '♂';
     return '•';
   }
-  function populateVoices(){
-    voices = window.speechSynthesis.getVoices();
-    voiceSelect.innerHTML = '';
-    const stored = STORE.loadVoice();
-    voices.forEach(v => {
-      const opt = document.createElement('option');
-      opt.value = v.name;
-      const badge = guessGender(v.name);
-      opt.textContent = \`\${badge} \${v.name} — \${v.lang}\`;
+  function fillVoiceSelect(){
+    voiceSelect.innerHTML='';
+    voices.forEach(v=>{
+      const opt=document.createElement('option');
+      opt.value=v.name;
+      opt.textContent=`${guessGender(v.name)} ${v.name} — ${v.lang}`;
       voiceSelect.appendChild(opt);
     });
-    // Restore previous choice or pick a reasonable default
-    const target = stored && voices.find(v=>v.name===stored) ? stored : (voices.find(v=>/samantha|victoria|joanna|olivia/i.test(v.name))?.name || voices[0]?.name);
-    if(target){
-      voiceSelect.value = target;
-      selectedVoiceName = target;
-      STORE.saveVoice(target);
+    const stored=STORE.loadVoice();
+    const target = stored && voices.find(v=>v.name===stored) ? stored : (voices[0]?.name);
+    if(target){ voiceSelect.value=target; selectedVoiceName=target; STORE.saveVoice(target); }
+  }
+  function loadVoicesOnce(){
+    voices = window.speechSynthesis.getVoices() || [];
+    if(voices.length){
+      voicesReady=true; fillVoiceSelect();
     }
   }
+  function robustLoadVoices(retries=10){
+    loadVoicesOnce();
+    if(voicesReady) return;
+    let count=0;
+    const iv=setInterval(()=>{
+      loadVoicesOnce();
+      count++;
+      if(voicesReady || count>=retries){
+        clearInterval(iv);
+        if(!voicesReady){
+          // As a last resort, trigger a dummy utterance (Safari quirk)
+          try{
+            const u=new SpeechSynthesisUtterance('');
+            window.speechSynthesis.speak(u);
+            setTimeout(()=>{ loadVoicesOnce(); if(voicesReady) fillVoiceSelect(); }, 250);
+          }catch(e){}
+        }
+      }
+    }, 250);
+  }
+  // Initial attempt
   if('speechSynthesis' in window){
-    populateVoices();
-    window.speechSynthesis.onvoiceschanged = populateVoices;
+    robustLoadVoices(16);
+    window.speechSynthesis.onvoiceschanged = ()=>{ voicesReady=false; loadVoicesOnce(); if(voicesReady) fillVoiceSelect(); };
   }
 
   // Events
-  startPauseBtn.addEventListener('click', ()=>{ ensureAudio(); if(!running){ if(remaining<=0) resetSession(); running=true; statusEl.textContent='In session'; pattern=computePattern(); requestAnimationFrame(t=>{lastTick=t; tick(t)}); startPauseBtn.textContent='⏸ Pause'; } else { running=false; statusEl.textContent='Paused'; startPauseBtn.textContent='▶ Resume'; } });
-  resetBtn.addEventListener('click', resetSession);
+  function markFirstGesture(){ if(firstUserGesture) return; firstUserGesture=true; try{ robustLoadVoices(8); }catch(e){} }
+  ['click','keydown','touchstart'].forEach(evt=>window.addEventListener(evt, markFirstGesture, {once:true}));
+
+  startPauseBtn.addEventListener('click', ()=>{ markFirstGesture(); ensureAudio(); if(!running){ if(remaining<=0) resetSession(); running=true; statusEl.textContent='In session'; pattern=computePattern(); requestAnimationFrame(t=>{lastTick=t; tick(t)}); startPauseBtn.textContent='⏸ Pause'; } else { running=false; statusEl.textContent='Paused'; startPauseBtn.textContent='▶ Resume'; } });
+  resetBtn.addEventListener('click', ()=>{ markFirstGesture(); resetSession(); });
   modeEl.addEventListener('change', ()=>{ pattern=computePattern() });
   durationEl.addEventListener('input', ()=>{ durationLabel.textContent=durationEl.value; if(!running){ sessionSeconds=parseInt(durationEl.value,10)*60; remaining=sessionSeconds; timerEl.textContent=fmt(remaining); progressEl.textContent='0%'; }});
-  soundBtn.addEventListener('click', ()=>{ ensureAudio(); soundOn=!soundOn; soundBtn.setAttribute('aria-pressed', String(soundOn)); soundBtn.textContent=soundOn?'🔔 Chime: On':'🔔 Chime: Off'; if(soundOn) chime(660) });
+  soundBtn.addEventListener('click', ()=>{ markFirstGesture(); ensureAudio(); soundOn=!soundOn; soundBtn.setAttribute('aria-pressed', String(soundOn)); soundBtn.textContent=soundOn?'🔔 Chime: On':'🔔 Chime: Off'; if(soundOn) chime(660) });
   mantraBtn.addEventListener('click', ()=>{ mantraOn=!mantraOn; mantraBtn.setAttribute('aria-pressed', String(mantraOn)); mantraBtn.textContent=mantraOn?'🕉️ Mantra: On':'🕉️ Mantra: Off'; mantraEl.style.display=mantraOn?'block':'none'; });
   guidedBtn.addEventListener('click', ()=>{ guidedOn=!guidedOn; guidedBtn.setAttribute('aria-pressed', String(guidedOn)); guidedBtn.textContent=guidedOn?'🎧 Guided Voice: On':'🎧 Guided Voice: Off'; if(guidedOn) speak('Guided voice on'); else speak('Guided voice off'); });
 
   [workStartEl, workEndEl, breakEveryEl, stretchLeadEl, reminderStyleEl].forEach(el=>{ el.addEventListener('change', ()=>{ if(workActive) scheduleNextBreak(new Date()); }); });
-  startWorkBtn.addEventListener('click', ()=>{ ensureAudio(); workActive=true; scheduleNextBreak(new Date()); workStatus.textContent='active'; workStatus.className='ok'; if(!schedulerTimer) schedulerTimer=setInterval(schedulerLoop, 500); });
+  startWorkBtn.addEventListener('click', ()=>{ markFirstGesture(); ensureAudio(); workActive=true; scheduleNextBreak(new Date()); workStatus.textContent='active'; workStatus.className='ok'; if(!schedulerTimer) schedulerTimer=setInterval(schedulerLoop, 500); });
   stopWorkBtn.addEventListener('click', ()=>{ workActive=false; workStatus.textContent='stopped'; workStatus.className='warn'; nextBreakAt=null; nextStretchAt=null; nextBreakLabel.textContent='—'; if(schedulerTimer){ clearInterval(schedulerTimer); schedulerTimer=null; } });
-  testReminderBtn.addEventListener('click', ()=>{ ensureAudio(); announce('It is time to take a break.'); });
+  testReminderBtn.addEventListener('click', ()=>{ markFirstGesture(); ensureAudio(); announce('It is time to take a break.'); });
 
   // Voice UI
   function updateVoiceLabels(){ rateLbl.textContent=voiceRate.value; pitchLbl.textContent=voicePitch.value; volLbl.textContent=voiceVol.value; }
   [voiceRate, voicePitch, voiceVol].forEach(el=>{ el.addEventListener('input', ()=>{ updateVoiceLabels(); STORE.saveParams(); }); });
   voiceSelect.addEventListener('change', ()=>{ selectedVoiceName=voiceSelect.value; STORE.saveVoice(selectedVoiceName); speak('Voice selected'); });
   pickFemale.addEventListener('click', ()=>{
+    if(!voices.length){ robustLoadVoices(8); return speak('Loading voices, please try again.'); }
     const v = voices.find(v=>/samantha|victoria|karen|moira|fiona|joanna|olivia|amy|emma|sara|salli/i.test(v.name));
     if(v){ selectedVoiceName=v.name; voiceSelect.value=v.name; STORE.saveVoice(v.name); speak('Female voice selected'); }
     else{ speak('No female voice detected on this device'); }
   });
   pickMale.addEventListener('click', ()=>{
+    if(!voices.length){ robustLoadVoices(8); return speak('Loading voices, please try again.'); }
     const v = voices.find(v=>/alex|daniel|fred|michael|brian|ryan|liam|arthur|tom|joey|justin|matthew/i.test(v.name));
     if(v){ selectedVoiceName=v.name; voiceSelect.value=v.name; STORE.saveVoice(v.name); speak('Male voice selected'); }
     else{ speak('No male voice detected on this device'); }
   });
-  saySample.addEventListener('click', ()=>{ ensureAudio(); speak('This is your guided voice sample.'); });
+  saySample.addEventListener('click', ()=>{ markFirstGesture(); ensureAudio(); speak('This is your guided voice sample.'); });
+  reloadVoicesBtn.addEventListener('click', ()=>{ robustLoadVoices(16); });
 
   // Restore posture checklist
   for(let i=1;i<=6;i++){ const el=document.getElementById('p'+i); const key='bb_posture_'+i; if(!el) continue; el.checked=localStorage.getItem(key)==='1'; el.addEventListener('change', ()=>{ localStorage.setItem(key, el.checked?'1':'0'); }); }
