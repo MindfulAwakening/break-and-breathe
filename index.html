@@ -1,99 +1,85 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Break & Breathe — Timed Meditation Breaks (v2.6)</title>
-<meta name="description" content="Timed meditation breaks with guided voice, voice controls, work hours scheduling, stretch prompts, customizable voices, and robust browser support.">
-<link rel="manifest" href="manifest.webmanifest">
-<meta name="theme-color" content="#0b1324">
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Break & Breathe — v2.8.0</title>
+<meta name="theme-color" content="#0b1324" />
+<link rel="manifest" href="manifest.webmanifest" />
 <style>
-  :root{
-    --bg:#0b1324; --card:#121c34; --accent:#8ad1ff; --text:#e8f0ff; --muted:#a9b8d6; --ring:rgba(138,209,255,0.25);
-    --good:#5ee4a7; --warn:#ffc76b;
-  }
+  :root{--bg:#0b1324;--card:#121c34;--accent:#8ad1ff;--text:#e8f0ff;--muted:#a9b8d6;--ring:rgba(138,209,255,.25);--good:#5ee4a7;--warn:#ffc76b;}
   *{box-sizing:border-box}
   html,body{height:100%}
-  body{
-    margin:0;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial,"Noto Sans";
-    color:var(--text);
-    background: radial-gradient(1200px 600px at 80% -10%, #1e2a4d 0%, transparent 60%),
-                radial-gradient(900px 400px at -10% 120%, #1b2747 0%, transparent 60%), var(--bg);
-    display:flex;align-items:flex-start;justify-content:center;padding:16px
-  }
-  .app{width:100%;max-width:1240px;backdrop-filter:blur(8px)}
-  .card{background:linear-gradient(180deg, rgba(18,28,52,0.9), rgba(13,20,38,0.92));border:1px solid rgba(255,255,255,0.06);border-radius:16px;padding:16px;box-shadow:0 8px 24px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.04)}
-  header{position:relative;z-index:10;display:flex;gap:12px;align-items:center;justify-content:space-between;margin-bottom:8px; pointer-events:auto}
-  .title{font-weight:700;font-size:clamp(18px,3.6vw,26px);letter-spacing:.2px;display:flex;align-items:center;gap:10px}
+  body{margin:0;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial,"Noto Sans";
+       color:var(--text);background:var(--bg);display:flex;align-items:flex-start;justify-content:center;padding:16px}
+  .app{width:100%;max-width:1240px}
+  .card{background:linear-gradient(180deg,rgba(18,28,52,.9),rgba(13,20,38,.92));
+        border:1px solid rgba(255,255,255,.06);border-radius:16px;padding:16px}
+  header{position:relative;z-index:10;display:flex;gap:12px;align-items:center;justify-content:space-between;margin-bottom:8px;pointer-events:auto}
+  .title{font-weight:700;font-size:clamp(18px,3.6vw,26px);display:flex;align-items:center;gap:10px}
   .badge{font-size:12px;padding:2px 8px;border-radius:999px;background:rgba(138,209,255,.12);color:var(--accent);border:1px solid rgba(138,209,255,.25)}
   .muted{color:var(--muted);font-size:12px}
-  .grid{display:grid;gap:12px;grid-template-columns:1.2fr .9fr;align-items:stretch}
-  .controls{position:relative;z-index:10;display:grid;grid-template-columns:1.2fr 1fr 1.1fr 1fr;gap:12px;margin:8px 0 6px; pointer-events:auto}
-  @media (max-width:820px){ .controls{grid-template-columns:1fr 1fr; } .grid{grid-template-columns:1fr; } }
+  .grid{display:grid;gap:12px;grid-template-columns:1.2fr .9fr}
+  .controls{position:relative;z-index:10;display:grid;grid-template-columns:1.2fr 1fr 1.1fr 1fr;gap:12px;margin:8px 0 6px;pointer-events:auto}
+  @media (max-width:820px){.controls{grid-template-columns:1fr 1fr}.grid{grid-template-columns:1fr}}
   label{font-size:12px;color:var(--muted);display:block;margin-bottom:6px}
   select,input[type="range"],input[type="time"],input[type="number"],.btn{
-    width:100%;border:1px solid rgba(255,255,255,0.08);background:rgba(255,255,255,0.03);color:var(--text);
-    border-radius:12px;padding:8px 10px;font-size:14px;outline:none
-  }
-  select:focus,input:focus,.btn:focus{box-shadow:0 0 0 3px rgba(138,209,255,0.25)}
+    width:100%;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.03);color:var(--text);
+    border-radius:12px;padding:8px 10px;font-size:14px;outline:none}
   .btn{cursor:pointer;text-align:center;user-select:none;transition:transform .05s ease}
   .btn:active{transform:translateY(1px)}
-  .btn.primary{background:linear-gradient(180deg, rgba(138,209,255,.18), rgba(138,209,255,.08)); border-color:rgba(138,209,255,.35)}
-  .btn.ghost{background:rgba(255,255,255,0.03)}
+  .btn.primary{background:linear-gradient(180deg,rgba(138,209,255,.18),rgba(138,209,255,.08));border-color:rgba(138,209,255,.35)}
+  .btn.ghost{background:rgba(255,255,255,.03)}
   .row{display:flex;gap:8px}.row>.btn{flex:1}
-  .section{margin-top:10px;padding:12px;border:1px solid rgba(255,255,255,0.06);border-radius:12px;background:rgba(255,255,255,0.03); position:relative; z-index:2 }
-  .section h3{margin:0 0 6px 0;font-size:15px}
+  .section{margin-top:10px;padding:12px;border:1px solid rgba(255,255,255,.06);border-radius:12px;background:rgba(255,255,255,.03)}
   .two-col{display:grid;grid-template-columns:1fr 1fr;gap:8px}
   @media (max-width:820px){.two-col{grid-template-columns:1fr}}
-  /* Pacer area can NEVER block clicks */
-  .pacer-wrap{position:relative;aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;background:radial-gradient(40% 40% at 50% 50%, rgba(138,209,255,.1), rgba(255,255,255,.02));border-radius:18px;overflow:hidden;border:1px solid rgba(255,255,255,0.06); z-index:0; max-height:60vh; pointer-events:none }
-  .pacer{width:min(300px,60%);aspect-ratio:1/1;border-radius:50%;border:2px solid var(--ring);box-shadow:0 0 50px 8px var(--ring), inset 0 0 40px rgba(138,209,255,.12);display:flex;align-items:center;justify-content:center;transform:scale(.88);transition:transform var(--phase-ms,3000ms) linear}
+  /* Pacer never blocks clicks */
+  .pacer-wrap{position:relative;aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;
+              background:radial-gradient(40% 40% at 50% 50%,rgba(138,209,255,.1),rgba(255,255,255,.02));
+              border-radius:18px;overflow:hidden;border:1px solid rgba(255,255,255,0.06);z-index:0;max-height:60vh;pointer-events:none}
+  .pacer{width:min(300px,60%);aspect-ratio:1/1;border-radius:50%;border:2px solid var(--ring);
+         box-shadow:0 0 50px 8px var(--ring),inset 0 0 40px rgba(138,209,255,.12);display:flex;align-items:center;justify-content:center;
+         transform:scale(.88);transition:transform var(--phase-ms,3000ms) linear}
   .pacer .dot{width:12px;height:12px;border-radius:50%;background:var(--accent);box-shadow:0 0 18px var(--accent),0 0 40px var(--accent);opacity:.9}
   [data-phase="inhale"] .pacer{transform:scale(1.06)}
   [data-phase="exhale"] .pacer{transform:scale(.88)}
   [data-phase="hold"] .pacer{transform:scale(.97)}
-  .hud{position:absolute;inset:8px 8px auto 8px;display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--muted); pointer-events:none }
-  .timer{position:absolute;inset:auto 0 18px 0;text-align:center;font-size:clamp(18px,4.5vw,40px);font-weight:700;letter-spacing:1.2px; pointer-events:none}
-  .phase{position:absolute;inset:auto 0 66px 0;text-align:center;font-size:clamp(13px,3vw,17px);color:var(--muted); pointer-events:none}
+  .hud{position:absolute;inset:8px 8px auto 8px;display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--muted);pointer-events:none}
+  .timer{position:absolute;inset:auto 0 18px 0;text-align:center;font-size:clamp(18px,4.5vw,40px);font-weight:700;letter-spacing:1.2px;pointer-events:none}
+  .phase{position:absolute;inset:auto 0 66px 0;text-align:center;font-size:clamp(13px,3vw,17px);color:var(--muted);pointer-events:none}
   .mantra{position:absolute;inset:auto 0 102px 0;text-align:center;font-size:clamp(28px,6vw,48px);font-weight:700;letter-spacing:1.5px;opacity:.18;user-select:none;pointer-events:none}
   footer{margin-top:8px;color:var(--muted);font-size:12px;text-align:center}
-  .inline{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-  .pill{padding:6px 10px;border-radius:999px;background:rgba(255,255,255,.06);font-size:12px;color:var(--muted)}
-  .ok{color:var(--good)} .warn{color:var(--warn)}
-  .grid > * { position: relative; z-index: 1; }
-  .grid > .pacer-wrap { z-index: 0; }
-  @media (prefers-reduced-motion: reduce){.pacer{transition:none;transform:scale(1)}[data-phase] .pacer{transform:scale(1)}}
 </style>
 </head>
 <body>
   <div class="app">
     <div class="card">
       <header>
-        <div class="title">🧘‍♂️ Break &amp; Breathe <span class="badge">MVP v2.6</span></div>
+        <div class="title">🧘‍♂️ Break &amp; Breathe <span class="badge">MVP v2.8.0</span></div>
         <div class="muted">Space = start/pause · R = reset</div>
       </header>
 
-      <!-- Core breathing controls -->
       <div class="controls">
         <div>
           <label for="mode">Breathing Mode</label>
-          <select id="mode" aria-label="Breathing mode">
-            <option value="hongsau">Hong-Sau (gentle, natural)</option>
-            <option value="equal">Equal Count (in = out)</option>
+          <select id="mode">
+            <option value="hongsau">Hong-Sau</option>
+            <option value="equal">Equal</option>
             <option value="box">Box 4-4-4-4</option>
             <option value="478">4-7-8</option>
           </select>
         </div>
         <div>
           <label for="duration">Session Length: <span id="durationLabel">20</span> min</label>
-          <input type="range" id="duration" min="10" max="30" step="5" value="20" aria-label="Session length in minutes">
+          <input type="range" id="duration" min="10" max="30" step="5" value="20" />
         </div>
         <div>
           <label>Sound, Mantra &amp; Guidance</label>
           <div class="row">
-            <button id="sound" class="btn ghost" aria-pressed="false" aria-label="Toggle chime">🔔 Chime: Off</button>
-            <button id="mantraBtn" class="btn ghost" aria-pressed="true" aria-label="Toggle mantra text">🕉️ Mantra: On</button>
-            <button id="guidedBtn" class="btn ghost" aria-pressed="true" aria-label="Toggle guided voice">🎧 Guided Voice: On</button>
+            <button id="sound" class="btn ghost" aria-pressed="false">🔔 Chime: Off</button>
+            <button id="mantraBtn" class="btn ghost" aria-pressed="true">🕉️ Mantra: On</button>
+            <button id="guidedBtn" class="btn ghost" aria-pressed="true">🎧 Guided Voice: On</button>
           </div>
         </div>
         <div>
@@ -106,75 +92,57 @@
       </div>
 
       <div class="grid">
-        <!-- Pacer / Timer -->
+        <!-- PACER / TIMER -->
         <div class="pacer-wrap card" id="stage" data-phase="ready" aria-live="polite" aria-atomic="true">
-          <div class="hud">
-            <div id="status" class="muted">Ready</div>
-            <div id="progress" class="muted">0%</div>
-          </div>
+          <div class="hud"><div id="status" class="muted">Ready</div><div id="progress" class="muted">0%</div></div>
           <div class="pacer" id="pacer" aria-hidden="true"><div class="dot"></div></div>
           <div class="mantra" id="mantra" aria-hidden="true"></div>
           <div class="phase" id="phase">—</div>
           <div class="timer" id="timer">20:00</div>
         </div>
 
-        <!-- Right column: posture + scheduling + voice -->
+        <!-- RIGHT: posture + scheduling + voice -->
         <div>
           <div class="section">
             <h3>Posture Check</h3>
             <div class="two-col">
-              <label class="inline"><input type="checkbox" id="p1"> Feet grounded / sit bones rooted</label>
-              <label class="inline"><input type="checkbox" id="p2"> Spine tall; chin gently tucked</label>
-              <label class="inline"><input type="checkbox" id="p3"> Shoulders down; chest soft</label>
-              <label class="inline"><input type="checkbox" id="p4"> Jaw unclenched; tongue relaxed</label>
-              <label class="inline"><input type="checkbox" id="p5"> Eyes soft; inward gaze</label>
-              <label class="inline"><input type="checkbox" id="p6"> Hands resting comfortably</label>
+              <label><input type="checkbox" id="p1"> Feet grounded / sit bones rooted</label>
+              <label><input type="checkbox" id="p2"> Spine tall; chin gently tucked</label>
+              <label><input type="checkbox" id="p3"> Shoulders down; chest soft</label>
+              <label><input type="checkbox" id="p4"> Jaw unclenched; tongue relaxed</label>
+              <label><input type="checkbox" id="p5"> Eyes soft; inward gaze</label>
+              <label><input type="checkbox" id="p6"> Hands resting comfortably</label>
             </div>
           </div>
 
           <div class="section">
             <h3>Work Hours & Break Reminders</h3>
             <div class="two-col">
-              <div>
-                <label for="workStart">Workday starts</label>
-                <input type="time" id="workStart" value="08:00">
-              </div>
-              <div>
-                <label for="workEnd">Workday ends</label>
-                <input type="time" id="workEnd" value="17:00">
-              </div>
-              <div>
-                <label for="breakEvery">Break every (minutes)</label>
-                <input id="breakEvery" type="number" min="15" max="180" step="5" value="60">
-              </div>
-              <div>
-                <label for="stretchLead">Stretch reminder (minutes before break)</label>
-                <input id="stretchLead" type="number" min="0" max="10" step="1" value="2">
-              </div>
+              <div><label for="workStart">Workday starts</label><input type="time" id="workStart" value="08:00"></div>
+              <div><label for="workEnd">Workday ends</label><input type="time" id="workEnd" value="17:00"></div>
+              <div><label for="breakEvery">Break every (minutes)</label><input id="breakEvery" type="number" min="15" max="180" step="5" value="60"></div>
+              <div><label for="stretchLead">Stretch reminder (minutes before break)</label><input id="stretchLead" type="number" min="0" max="10" step="1" value="2"></div>
             </div>
             <div class="two-col" style="margin-top:8px">
-              <div>
-                <label>Reminder style</label>
+              <div><label>Reminder style</label>
                 <select id="reminderStyle">
                   <option value="voice">Voice (spoken)</option>
                   <option value="chime">Chime</option>
                   <option value="both">Both</option>
                 </select>
               </div>
-              <div>
-                <label>&nbsp;</label>
+              <div><label>&nbsp;</label>
                 <div class="row">
                   <button id="startWork" class="btn primary">🟢 Start Workday</button>
                   <button id="stopWork" class="btn ghost">⛔ Stop</button>
                 </div>
               </div>
             </div>
-            <div class="inline" style="margin-top:10px">
-              <span class="pill">Next break: <span id="nextBreakLabel">—</span></span>
-              <span class="pill">Status: <span id="workStatus" class="warn">stopped</span></span>
-              <button id="testReminder" class="btn ghost">Test announcement</button>
+            <div class="row" style="margin-top:8px">
+              <span class="muted">Next break: <b id="nextBreakLabel">—</b></span>
+              <span class="muted" style="margin-left:12px">Status: <b id="workStatus" class="warn">stopped</b></span>
+              <button id="testReminder" class="btn ghost" style="margin-left:auto">Test announcement</button>
             </div>
-            <p class="muted" style="margin-top:8px">Keep this tab open. Audio may require one click (e.g., Start Workday) to enable sound.</p>
           </div>
 
           <div class="section">
@@ -186,149 +154,64 @@
                 <div class="muted" id="voiceStatus" style="margin-top:4px">Loading voices…</div>
               </div>
               <div>
-                <label>Quick pick</label>
-                <div class="row">
-                  <button id="pickFemale" class="btn ghost" type="button">♀ Prefer Female</button>
-                  <button id="pickMale" class="btn ghost" type="button">♂ Prefer Male</button>
-                </div>
-              </div>
-            </div>
-            <div class="two-col" style="margin-top:8px">
-              <div>
-                <label for="voiceRate">Rate (speed): <span id="rateLbl">0.9</span></label>
-                <input id="voiceRate" type="range" min="0.6" max="1.4" step="0.05" value="0.9">
-              </div>
-              <div>
-                <label for="voicePitch">Pitch: <span id="pitchLbl">1.0</span></label>
-                <input id="voicePitch" type="range" min="0.7" max="1.3" step="0.05" value="1.0">
-              </div>
-            </div>
-            <div class="two-col" style="margin-top:8px">
-              <div>
-                <label for="voiceVol">Volume: <span id="volLbl">1.0</span></label>
-                <input id="voiceVol" type="range" min="0.2" max="1.0" step="0.05" value="1.0">
-              </div>
-              <div>
                 <label>&nbsp;</label>
                 <div class="row">
                   <button id="saySample" class="btn ghost">🔊 Try Sample</button>
                   <button id="reloadVoices" class="btn ghost">↻ Reload Voices</button>
                   <button id="unlockAudio" class="btn ghost">🔓 Unlock Audio</button>
-                  <button id="useDefault" class="btn ghost">✔ Use Default Voice</button>
+                  <button id="useDefault" class="btn ghost">✔ Use Default</button>
                 </div>
               </div>
             </div>
-            <p class="muted" style="margin-top:8px">Note: Available voices vary by browser/OS. On the first click, press **Unlock Audio** if you don't hear sound.</p>
-          </div>
-
-          <div class="section">
-            <details>
-              <summary class="muted">Why Hong-Sau?</summary>
-              <p class="muted">Hong-Sau pairs natural breathing with the mental sounds “Hong” (in-breath) and “Sau” (out-breath). Let the breath remain easy—don’t force the counts. If the pacer’s rhythm doesn’t suit you, simply observe your breath.</p>
-            </details>
-            <div class="inline" id="stats" style="margin-top:8px"></div>
+            <div class="two-col" style="margin-top:8px">
+              <div><label>Rate (speed): <span id="rateLbl">0.9</span></label><input id="voiceRate" type="range" min="0.6" max="1.4" step="0.05" value="0.9"></div>
+              <div><label>Pitch: <span id="pitchLbl">1.0</span></label><input id="voicePitch" type="range" min="0.7" max="1.3" step="0.05" value="1.0"></div>
+            </div>
+            <div class="two-col" style="margin-top:8px">
+              <div><label>Volume: <span id="volLbl">1.0</span></label><input id="voiceVol" type="range" min="0.2" max="1.0" step="0.05" value="1.0"></div>
+            </div>
           </div>
         </div>
       </div>
 
-      <footer>
-        This tool is for relaxation and focus only. Not medical advice. If you feel dizzy or uncomfortable, pause and breathe normally.
-      </footer>
+      <footer class="muted">Auto-updating PWA. If you ever see stale content, refresh to activate the new version.</footer>
     </div>
   </div>
 
 <script>
-window.addEventListener('DOMContentLoaded', () => {
-try{
-  // Core selectors
-  const modeEl = document.getElementById('mode');
-  const durationEl = document.getElementById('duration');
-  const durationLabel = document.getElementById('durationLabel');
-  const startPauseBtn = document.getElementById('startPause');
-  const resetBtn = document.getElementById('reset');
-  const soundBtn = document.getElementById('sound');
-  const mantraBtn = document.getElementById('mantraBtn');
-  const guidedBtn = document.getElementById('guidedBtn');
+(function(){
+  'use strict';
+  const $=id=>document.getElementById(id);
 
-  const stage = document.getElementById('stage');
-  const pacer = document.getElementById('pacer');
-  const timerEl = document.getElementById('timer');
-  const phaseEl = document.getElementById('phase');
-  const mantraEl = document.getElementById('mantra');
-  const statusEl = document.getElementById('status');
-  const progressEl = document.getElementById('progress');
-  const statsEl = document.getElementById('stats');
+  const modeEl=$('mode'), durationEl=$('duration'), durationLabel=$('durationLabel');
+  const startPauseBtn=$('startPause'), resetBtn=$('reset'), soundBtn=$('sound'), mantraBtn=$('mantraBtn'), guidedBtn=$('guidedBtn');
+  const stage=$('stage'), pacer=$('pacer'), timerEl=$('timer'), phaseEl=$('phase'), mantraEl=$('mantra'), statusEl=$('status'), progressEl=$('progress');
 
-  // Work selectors
-  const workStartEl = document.getElementById('workStart');
-  const workEndEl = document.getElementById('workEnd');
-  const breakEveryEl = document.getElementById('breakEvery');
-  const stretchLeadEl = document.getElementById('stretchLead');
-  const reminderStyleEl = document.getElementById('reminderStyle');
-  const startWorkBtn = document.getElementById('startWork');
-  const stopWorkBtn = document.getElementById('stopWork');
-  const nextBreakLabel = document.getElementById('nextBreakLabel');
-  const workStatus = document.getElementById('workStatus');
-  const testReminderBtn = document.getElementById('testReminder');
+  const workStartEl=$('workStart'), workEndEl=$('workEnd'), breakEveryEl=$('breakEvery'), stretchLeadEl=$('stretchLead'), reminderStyleEl=$('reminderStyle');
+  const startWorkBtn=$('startWork'), stopWorkBtn=$('stopWork'), nextBreakLabel=$('nextBreakLabel'), workStatus=$('workStatus'), testReminderBtn=$('testReminder');
 
-  // Voice controls/selectors
-  const voiceSelect = document.getElementById('voiceSelect');
-  const voiceStatus = document.getElementById('voiceStatus');
-  const pickFemale = document.getElementById('pickFemale');
-  const pickMale = document.getElementById('pickMale');
-  const voiceRate = document.getElementById('voiceRate'); const rateLbl = document.getElementById('rateLbl');
-  const voicePitch = document.getElementById('voicePitch'); const pitchLbl = document.getElementById('pitchLbl');
-  const voiceVol = document.getElementById('voiceVol'); const volLbl = document.getElementById('volLbl');
-  const saySample = document.getElementById('saySample');
-  const reloadVoicesBtn = document.getElementById('reloadVoices');
-  const unlockAudioBtn = document.getElementById('unlockAudio');
-  const useDefaultBtn = document.getElementById('useDefault');
+  const voiceSelect=$('voiceSelect'), voiceStatus=$('voiceStatus'), saySample=$('saySample'), reloadVoicesBtn=$('reloadVoices'), unlockAudioBtn=$('unlockAudio'), useDefaultBtn=$('useDefault');
+  const voiceRate=$('voiceRate'), voicePitch=$('voicePitch'), voiceVol=$('voiceVol'), rateLbl=$('rateLbl'), pitchLbl=$('pitchLbl'), volLbl=$('volLbl');
 
-  // State
   let running=false, sessionSeconds=parseInt(durationEl.value,10)*60, remaining=sessionSeconds, lastTick=null;
   let phase='ready', phaseRemaining=0, pattern=[];
   let soundOn=false, mantraOn=true, guidedOn=true;
   let workActive=false, nextBreakAt=null, nextStretchAt=null, schedulerTimer=null;
-  let voices=[], selectedVoiceName=null, voicesReady=false, firstUserGesture=false, audioCtx=null;
+  let voices=[], selectedVoiceName='', audioCtx=null;
 
-  // Persistence
-  const STORE = {
-    kVoice: 'bb_voice_choice_v1',
-    kParams: 'bb_voice_settings_v1',
-    saveVoice(name){ localStorage.setItem(this.kVoice, name || '') },
-    loadVoice(){ return localStorage.getItem(this.kVoice) || '' },
-    saveParams(){ localStorage.setItem(this.kParams, JSON.stringify({rate:voiceRate.value, pitch:voicePitch.value, vol:voiceVol.value})) },
-    loadParams(){ try{ const s=JSON.parse(localStorage.getItem(this.kParams)||'{}'); if(s.rate) voiceRate.value=s.rate; if(s.pitch) voicePitch.value=s.pitch; if(s.vol) voiceVol.value=s.vol; }catch(e){} }
+  const fmt=sec=>{sec=Math.max(0,Math.round(sec));const m=Math.floor(sec/60),s=sec%60;return `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;};
+  const computePattern=()=>{const m=modeEl.value;
+    if(m==='hongsau')return[{phase:'inhale',secs:4.5},{phase:'exhale',secs:5.5}];
+    if(m==='box')return[{phase:'inhale',secs:4},{phase:'hold',secs:4},{phase:'exhale',secs:4},{phase:'hold',secs:4}];
+    if(m==='478')return[{phase:'inhale',secs:4},{phase:'hold',secs:7},{phase:'exhale',secs:8}];
+    return[{phase:'inhale',secs:4},{phase:'exhale',secs:4}];
   };
-
-  // Stats render
-  function renderStats(){
-    try{
-      const s = JSON.parse(localStorage.getItem('bb_stats_v1') || '{}');
-      statsEl.innerHTML = \`
-        <span class="pill">Sessions: <span class="ok">\${s.sessions||0}</span></span>
-        <span class="pill">Total minutes: <span class="ok">\${s.totalMin||0}</span></span>
-        \${s.last ? \`<span class="pill">Last: \${new Date(s.last).toLocaleString()}</span>\` : ''}
-      \`;
-    }catch(e){ statsEl.textContent = ''; }
-  }
-
-  // Helpers
-  function fmt(sec){ sec=Math.max(0,Math.round(sec)); const m=Math.floor(sec/60),s=sec%60; return \`\${String(m).padStart(2,'0')}:\${String(s).padStart(2,'0')}\`; }
-  function voiceParams(){ return {rate: parseFloat(voiceRate.value), pitch: parseFloat(voicePitch.value), vol: parseFloat(voiceVol.value)} }
-  function getSelectedVoice(){
-    const name = selectedVoiceName || STORE.loadVoice();
-    if(!voices || !voices.length) return null;
-    let v = voices.find(v=>v.name===name) || voices[0];
-    return v || null;
-  }
-  function setPhase(newPhase, ms){
+  function setPhase(newPhase,ms){
     phase=newPhase; stage.dataset.phase=(newPhase==='hold'?'hold':newPhase);
     phaseEl.textContent=(newPhase==='hold')?'Hold':(newPhase.charAt(0).toUpperCase()+newPhase.slice(1));
     stage.style.setProperty('--phase-ms',(ms||1000)+'ms');
     if(mantraOn){
-      if(modeEl.value==='hongsau'){ mantraEl.textContent=(newPhase==='inhale')?'HONG':(newPhase==='exhale'?'SAU':''); }
-      else{ mantraEl.textContent=(newPhase==='inhale')?'IN':(newPhase==='exhale'?'OUT':''); }
+      mantraEl.textContent=(modeEl.value==='hongsau')?(newPhase==='inhale'?'HONG':(newPhase==='exhale'?'SAU':'')):(newPhase==='inhale'?'IN':(newPhase==='exhale'?'OUT':''));
       mantraEl.style.display='block';
     }else{ mantraEl.style.display='none'; }
     if(guidedOn){
@@ -340,13 +223,6 @@ try{
     if(soundOn && (newPhase==='inhale' || newPhase==='exhale' || newPhase==='done')){
       chime(newPhase==='exhale'?523.25:(newPhase==='done'?784:392));
     }
-  }
-  function computePattern(){
-    const m=modeEl.value;
-    if(m==='hongsau') return [{phase:'inhale',secs:4.5},{phase:'exhale',secs:5.5}];
-    if(m==='box') return [{phase:'inhale',secs:4},{phase:'hold',secs:4},{phase:'exhale',secs:4},{phase:'hold',secs:4}];
-    if(m==='478') return [{phase:'inhale',secs:4},{phase:'hold',secs:7},{phase:'exhale',secs:8}];
-    return [{phase:'inhale',secs:4},{phase:'exhale',secs:4}];
   }
   function resetSession(){
     running=false; startPauseBtn.textContent='▶ Start';
@@ -361,28 +237,35 @@ try{
     if(remaining<=0){
       remaining=0; running=false; startPauseBtn.textContent='▶ Start'; setPhase('done',400);
       statusEl.textContent='Complete'; progressEl.textContent='100%'; timerEl.textContent=fmt(remaining);
-      try{ const s=JSON.parse(localStorage.getItem('bb_stats_v1')||'{}'); s.sessions=(s.sessions||0)+1; s.totalMin=(s.totalMin||0)+Math.round(sessionSeconds/60); s.last=new Date().toISOString(); localStorage.setItem('bb_stats_v1', JSON.stringify(s)); renderStats(); }catch(e){}
       return;
     }
-    timerEl.textContent=fmt(remaining); const pct=((sessionSeconds-remaining)/sessionSeconds)*100; progressEl.textContent=\`\${Math.min(100, Math.floor(pct))}%\`;
-    if(phaseRemaining<=0){ const idx=(pattern._idx||0)%pattern.length; const step=pattern[idx]; pattern._idx=idx+1; phaseRemaining=step.secs; setPhase(step.phase, step.secs*1000); }
+    timerEl.textContent=fmt(remaining);
+    const pct=((sessionSeconds-remaining)/sessionSeconds)*100; progressEl.textContent=`${Math.min(100,Math.floor(pct))}%`;
+    if(phaseRemaining<=0){
+      const idx=(pattern._idx||0)%pattern.length; const step=pattern[idx]; pattern._idx=idx+1; phaseRemaining=step.secs; setPhase(step.phase, step.secs*1000);
+    }
     phaseRemaining-=dt; requestAnimationFrame(tick);
   }
 
   // Audio / Voice
   function ensureAudio(){ if(!audioCtx) audioCtx=new (window.AudioContext||window.webkitAudioContext)(); if(audioCtx.state==='suspended') audioCtx.resume(); }
   function chime(freq=392){
-    try{ ensureAudio(); const o=audioCtx.createOscillator(), g=audioCtx.createGain(); o.type='sine'; o.frequency.value=freq; o.connect(g); g.connect(audioCtx.destination);
-      const n=audioCtx.currentTime; g.gain.setValueAtTime(0,n); g.gain.linearRampToValueAtTime(0.08,n+0.02); g.gain.exponentialRampToValueAtTime(0.0001,n+0.35); o.start(n); o.stop(n+0.36);
+    try{
+      ensureAudio();
+      const o=audioCtx.createOscillator(), g=audioCtx.createGain();
+      o.type='sine'; o.frequency.value=freq; o.connect(g); g.connect(audioCtx.destination);
+      const n=audioCtx.currentTime; g.gain.setValueAtTime(0,n);
+      g.gain.linearRampToValueAtTime(0.08,n+0.02); g.gain.exponentialRampToValueAtTime(0.0001,n+0.35);
+      o.start(n); o.stop(n+0.36);
     }catch(e){}
   }
+  const voiceParams=()=>({rate:parseFloat(voiceRate.value),pitch:parseFloat(voicePitch.value),vol:parseFloat(voiceVol.value)});
+  const getSelectedVoice=()=>{ if(!voices.length||!selectedVoiceName) return null; return voices.find(v=>v.name===selectedVoiceName)||null; };
   function speak(text){
     try{
       const msg=new SpeechSynthesisUtterance(text);
-      const p=voiceParams();
-      const v=getSelectedVoice();
-      if(v) msg.voice=v;
-      msg.rate=p.rate; msg.pitch=p.pitch; msg.volume=p.vol;
+      const p=voiceParams(); const v=getSelectedVoice();
+      if(v) msg.voice=v; msg.rate=p.rate; msg.pitch=p.pitch; msg.volume=p.vol;
       window.speechSynthesis.speak(msg);
     }catch(e){}
   }
@@ -394,20 +277,23 @@ try{
   }
 
   // Workday scheduling
-  function parseTimeToToday(tstr){ const [hh,mm]=tstr.split(':').map(v=>parseInt(v,10)); const d=new Date(); d.setHours(hh,mm||0,0,0); return d; }
-  function inWorkWindow(now){
-    const start=parseTimeToToday(workStartEl.value), end=parseTimeToToday(workEndEl.value);
-    if(end<=start){ const end2=new Date(end.getTime()+86400000); return (now>=start)||(now<end2); }
-    return now>=start && now<=end;
-  }
+  const parseTime=t=>{ const [hh,mm]=t.split(':').map(v=>parseInt(v,10)); const d=new Date(); d.setHours(hh,mm||0,0,0); return d; };
+  const inWorkWindow=now=>{
+    const s=parseTime(workStartEl.value), e=parseTime(workEndEl.value);
+    if(e<=s){ const e2=new Date(e.getTime()+86400000); return (now>=s)||(now<e2); }
+    return now>=s && now<=e;
+  };
   function scheduleNextBreak(base){
     const intervalMin=Math.max(1,parseInt(breakEveryEl.value,10));
     const next=new Date((base||new Date()).getTime()+intervalMin*60000);
-    nextBreakAt=next; const leadMin=Math.max(0,parseInt(stretchLeadEl.value,10)); nextStretchAt=new Date(next.getTime()-leadMin*60000);
+    nextBreakAt=next;
+    const lead=Math.max(0,parseInt(stretchLeadEl.value,10));
+    nextStretchAt=new Date(next.getTime()-lead*60000);
     nextBreakLabel.textContent=next.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
   }
   function schedulerLoop(){
-    if(!workActive) return; const now=new Date();
+    if(!workActive) return;
+    const now=new Date();
     if(!inWorkWindow(now)){ workStatus.textContent='outside work hours'; workStatus.className='warn'; nextBreakLabel.textContent='—'; return; }
     workStatus.textContent='active'; workStatus.className='ok';
     if(!nextBreakAt) scheduleNextBreak(now);
@@ -415,97 +301,65 @@ try{
     if(nextBreakAt && now>=nextBreakAt){ announce('It is time to take a break.'); scheduleNextBreak(now); }
   }
 
-  // Voice list population with robust loading
-  function guessGender(name){
-    const n=(name||'').toLowerCase();
-    const fem=['samantha','victoria','karen','moira','susan','fiona','vicki','ellie','joanna','olivia','amy','emma','sara','salli'];
-    const male=['alex','daniel','fred','michael','john','brian','ryan','liam','arthur','tom','joey','justin','matthew'];
-    if(fem.some(x=>n.includes(x))) return '♀';
-    if(male.some(x=>n.includes(x))) return '♂';
-    return '•';
-  }
+  // Voices
   function fillVoiceSelect(){
     voiceSelect.innerHTML='';
     voices.forEach(v=>{
-      const opt=document.createElement('option');
-      opt.value=v.name;
-      opt.textContent=`${guessGender(v.name)} ${v.name} — ${v.lang}`;
-      voiceSelect.appendChild(opt);
+      const o=document.createElement('option');
+      o.value=v.name; o.textContent=`${v.name} — ${v.lang}`;
+      voiceSelect.appendChild(o);
     });
-    const stored=STORE.loadVoice();
-    const target = stored && voices.find(v=>v.name===stored) ? stored : (voices[0]?.name);
-    if(target){ voiceSelect.value=target; selectedVoiceName=target; STORE.saveVoice(target); }
+    if(!selectedVoiceName && voices[0]) selectedVoiceName=voices[0].name;
+    voiceSelect.value=selectedVoiceName||'';
     voiceStatus.textContent = voices.length ? `Loaded ${voices.length} voices` : 'No voices found';
   }
-  function tryLoadVoices(){
-    voices = window.speechSynthesis.getVoices() || [];
-    if(voices.length){ fillVoiceSelect(); return true; }
-    return false;
-  }
-  async function robustLoadVoices(maxTries=20){
-    if(!('speechSynthesis' in window)){ voiceStatus.textContent='Speech not supported in this browser.'; return; }
-    if(tryLoadVoices()) return;
-    // Wait for onvoiceschanged OR poll
-    let tries=0;
-    const wait = (ms)=>new Promise(r=>setTimeout(r,ms));
-    while(tries<maxTries){
-      await wait(200);
-      if(tryLoadVoices()) return;
-      tries++;
+  async function loadVoices(maxTries=20){
+    if(!('speechSynthesis' in window)){ voiceStatus.textContent='Speech not supported'; return; }
+    voices = window.speechSynthesis.getVoices();
+    if(voices.length){ fillVoiceSelect(); return; }
+    for(let i=0;i<maxTries;i++){
+      await new Promise(r=>setTimeout(r,200));
+      voices = window.speechSynthesis.getVoices();
+      if(voices.length){ fillVoiceSelect(); return; }
     }
-    // Nudge some browsers
     try{ window.speechSynthesis.speak(new SpeechSynthesisUtterance(' ')); }catch(e){}
-    await wait(250);
-    tryLoadVoices();
+    await new Promise(r=>setTimeout(r,250));
+    voices = window.speechSynthesis.getVoices(); fillVoiceSelect();
   }
 
-  // Events for voice UI & audio unlock
-  function updateVoiceLabels(){ rateLbl.textContent=voiceRate.value; pitchLbl.textContent=voicePitch.value; volLbl.textContent=voiceVol.value; }
-  [voiceRate, voicePitch, voiceVol].forEach(el=>{ el.addEventListener('input', ()=>{ updateVoiceLabels(); STORE.saveParams(); }); });
-  voiceSelect.addEventListener('change', ()=>{ selectedVoiceName=voiceSelect.value; STORE.saveVoice(selectedVoiceName); speak('Voice selected'); });
-  pickFemale.addEventListener('click', ()=>{
-    if(!voices.length){ robustLoadVoices(12); return; }
-    const v = voices.find(v=>/samantha|victoria|karen|moira|fiona|joanna|olivia|amy|emma|sara|salli/i.test(v.name));
-    if(v){ selectedVoiceName=v.name; voiceSelect.value=v.name; STORE.saveVoice(v.name); speak('Female voice selected'); }
-    else{ speak('No female voice detected on this device'); }
-  });
-  pickMale.addEventListener('click', ()=>{
-    if(!voices.length){ robustLoadVoices(12); return; }
-    const v = voices.find(v=>/alex|daniel|fred|michael|brian|ryan|liam|arthur|tom|joey|justin|matthew/i.test(v.name));
-    if(v){ selectedVoiceName=v.name; voiceSelect.value=v.name; STORE.saveVoice(v.name); speak('Male voice selected'); }
-    else{ speak('No male voice detected on this device'); }
-  });
-  saySample.addEventListener('click', ()=>{ ensureAudio(); speak('This is your guided voice sample.'); });
-  reloadVoicesBtn.addEventListener('click', ()=>{ robustLoadVoices(20); voiceStatus.textContent='Reloading voices…'; });
-  unlockAudioBtn.addEventListener('click', ()=>{ ensureAudio(); try{ window.speechSynthesis.speak(new SpeechSynthesisUtterance('Audio unlocked')); }catch(e){} });
-  useDefaultBtn.addEventListener('click', ()=>{ selectedVoiceName=''; STORE.saveVoice(''); speak('Using default voice'); });
-
-  // Core control events
-  startPauseBtn.addEventListener('click', ()=>{ ensureAudio(); if(!running){ if(remaining<=0) resetSession(); running=true; statusEl.textContent='In session'; pattern=computePattern(); requestAnimationFrame(t=>{lastTick=t; tick(t)}); startPauseBtn.textContent='⏸ Pause'; } else { running=false; statusEl.textContent='Paused'; startPauseBtn.textContent='▶ Resume'; } });
+  // Wire UI
+  startPauseBtn.addEventListener('click',()=>{ ensureAudio(); if(!running){ if(remaining<=0) resetSession(); running=true; statusEl.textContent='In session'; pattern=computePattern(); requestAnimationFrame(t=>{lastTick=t; tick(t)}); startPauseBtn.textContent='⏸ Pause'; } else { running=false; statusEl.textContent='Paused'; startPauseBtn.textContent='▶ Resume'; } });
   resetBtn.addEventListener('click', resetSession);
-  modeEl.addEventListener('change', ()=>{ pattern=computePattern() });
   durationEl.addEventListener('input', ()=>{ durationLabel.textContent=durationEl.value; if(!running){ sessionSeconds=parseInt(durationEl.value,10)*60; remaining=sessionSeconds; timerEl.textContent=fmt(remaining); progressEl.textContent='0%'; }});
-  soundBtn.addEventListener('click', ()=>{ ensureAudio(); soundOn=!soundOn; soundBtn.setAttribute('aria-pressed', String(soundOn)); soundBtn.textContent=soundOn?'🔔 Chime: On':'🔔 Chime: Off'; if(soundOn) chime(660) });
-  mantraBtn.addEventListener('click', ()=>{ mantraOn=!mantraOn; mantraBtn.setAttribute('aria-pressed', String(mantraOn)); mantraBtn.textContent=mantraOn?'🕉️ Mantra: On':'🕉️ Mantra: Off'; mantraEl.style.display=mantraOn?'block':'none'; });
-  guidedBtn.addEventListener('click', ()=>{ guidedOn=!guidedOn; guidedBtn.setAttribute('aria-pressed', String(guidedOn)); guidedBtn.textContent=guidedOn?'🎧 Guided Voice: On':'🎧 Guided Voice: Off'; if(guidedOn) speak('Guided voice on'); else speak('Guided voice off'); });
+  modeEl.addEventListener('change', ()=>{ pattern=computePattern() });
+  soundBtn.addEventListener('click', ()=>{ ensureAudio(); soundOn=!soundOn; soundBtn.textContent = soundOn?'🔔 Chime: On':'🔔 Chime: Off'; if(soundOn) chime(660); });
+  mantraBtn.addEventListener('click', ()=>{ mantraOn=!mantraOn; mantraBtn.textContent = mantraOn?'🕉️ Mantra: On':'🕉️ Mantra: Off'; mantraEl.style.display = mantraOn?'block':'none'; });
+  guidedBtn.addEventListener('click', ()=>{ guidedOn=!guidedOn; guidedBtn.textContent = guidedOn?'🎧 Guided Voice: On':'🎧 Guided Voice: Off'; if(guidedOn) speak('Guided voice on'); else speak('Guided voice off'); });
 
-  [workStartEl, workEndEl, breakEveryEl, stretchLeadEl, reminderStyleEl].forEach(el=>{ el.addEventListener('change', ()=>{ if(workActive) scheduleNextBreak(new Date()); }); });
+  [workStartEl,workEndEl,breakEveryEl,stretchLeadEl,reminderStyleEl].forEach(el=>el.addEventListener('change',()=>{ if(workActive) scheduleNextBreak(new Date()); }));
   startWorkBtn.addEventListener('click', ()=>{ ensureAudio(); workActive=true; scheduleNextBreak(new Date()); workStatus.textContent='active'; workStatus.className='ok'; if(!schedulerTimer) schedulerTimer=setInterval(schedulerLoop, 500); });
   stopWorkBtn.addEventListener('click', ()=>{ workActive=false; workStatus.textContent='stopped'; workStatus.className='warn'; nextBreakAt=null; nextStretchAt=null; nextBreakLabel.textContent='—'; if(schedulerTimer){ clearInterval(schedulerTimer); schedulerTimer=null; } });
   testReminderBtn.addEventListener('click', ()=>{ ensureAudio(); announce('It is time to take a break.'); });
 
+  voiceSelect.addEventListener('change', ()=>{ selectedVoiceName=voiceSelect.value; speak('Voice selected'); });
+  saySample.addEventListener('click', ()=>{ ensureAudio(); speak('This is your guided voice sample.'); });
+  reloadVoicesBtn.addEventListener('click', ()=>{ loadVoices(20); voiceStatus.textContent='Reloading voices…'; });
+  unlockAudioBtn.addEventListener('click', ()=>{ ensureAudio(); try{ window.speechSynthesis.speak(new SpeechSynthesisUtterance('Audio unlocked')); }catch(e){} });
+  useDefaultBtn.addEventListener('click', ()=>{ selectedVoiceName=''; speak('Using default voice'); });
+
   // Init
-  STORE.loadParams(); updateVoiceLabels();
-  resetSession(); renderStats();
-  if('speechSynthesis' in window){
-    robustLoadVoices(20);
-    window.speechSynthesis.onvoiceschanged = ()=>{ robustLoadVoices(6); };
-  } else {
-    voiceStatus.textContent = 'Speech not supported in this browser.';
+  resetSession(); loadVoices(20);
+
+  // Versioned Service Worker (prevents stale cache)
+  if('serviceWorker' in navigator){
+    window.addEventListener('load', ()=>{
+      navigator.serviceWorker.register('./service-worker.js?v=2.8.0')
+        .then(reg => { if(reg.waiting) reg.waiting.postMessage({type:'SKIP_WAITING'}); })
+        .catch(()=>{});
+    });
   }
-  if('serviceWorker' in navigator){ window.addEventListener('load', ()=>{ navigator.serviceWorker.register('./service-worker.js').catch(()=>{}); }); }
-}catch(err){ console.error('Init error', err); }
-});
+})();
 </script>
 </body>
 </html>
+
