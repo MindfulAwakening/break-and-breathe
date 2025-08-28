@@ -1,12 +1,14 @@
-# Break & Breathe — v2.3
+# Break & Breathe — v2.4
 
 ### New
-- Voice Settings panel with **Rate**, **Pitch**, and **Volume** sliders (persisted).
-- Guided Voice + reminder announcements now honor your settings.
+- **Voice picker**: choose any system/browser voice, plus quick-picks for male/female.
+- Voice choice is persisted; all guidance and reminders use it.
+- **More horizontal layout**: side-by-side by default, tighter padding, smaller pacer.
 
 ### Keep
-- Work Hours window, recurring breaks, stretch pre-alert
-- Test announcement: “It is time to take a break.”
-- Hong–Sau / Equal / Box / 4–7–8 timer, PWA offline
+- Voice controls: Rate, Pitch, Volume (persisted)
+- Guided Voice cues and “It is time to take a break.” reminders
+- Work Hours, recurring breaks, stretch pre-alert
+- PWA offline support
 
-Upload files to your GitHub repo root and enable GitHub Pages.
+> Note: available voices vary by browser/OS; Safari iOS has fewer voices.

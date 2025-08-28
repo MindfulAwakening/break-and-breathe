@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Break & Breathe — Timed Meditation Breaks (v2.3)</title>
-<meta name="description" content="Timed meditation breaks with Hong-Sau breathing, posture checks, chimes, voice reminders, work hours scheduling, stretch prompts, guided voice cues, and voice controls.">
+<title>Break & Breathe — Timed Meditation Breaks (v2.4)</title>
+<meta name="description" content="Timed meditation breaks with guided voice, voice controls, work hours scheduling, stretch prompts, and customizable voices.">
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#0b1324">
 <style>
@@ -14,47 +14,49 @@
   }
   *{box-sizing:border-box}
   html,body{height:100%}
-  body{margin:0;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial,"Noto Sans";
+  body{
+    margin:0;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial,"Noto Sans";
     color:var(--text);
     background: radial-gradient(1200px 600px at 80% -10%, #1e2a4d 0%, transparent 60%),
                 radial-gradient(900px 400px at -10% 120%, #1b2747 0%, transparent 60%), var(--bg);
-    display:flex;align-items:center;justify-content:center;padding:24px}
-  .app{width:min(1100px,100%);backdrop-filter:blur(8px)}
-  .card{background:linear-gradient(180deg, rgba(18,28,52,0.9), rgba(13,20,38,0.92));border:1px solid rgba(255,255,255,0.06);border-radius:16px;padding:20px;box-shadow:0 10px 30px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.04)}
-  header{display:flex;gap:16px;align-items:center;justify-content:space-between;margin-bottom:12px}
-  .title{font-weight:700;font-size:clamp(20px,4vw,28px);letter-spacing:.2px;display:flex;align-items:center;gap:12px}
-  .badge{font-size:12px;padding:4px 8px;border-radius:999px;background:rgba(138,209,255,.12);color:var(--accent);border:1px solid rgba(138,209,255,.25)}
+    display:flex;align-items:flex-start;justify-content:center;padding:16px
+  }
+  .app{width:100%;max-width:1240px;backdrop-filter:blur(8px)}
+  .card{background:linear-gradient(180deg, rgba(18,28,52,0.9), rgba(13,20,38,0.92));border:1px solid rgba(255,255,255,0.06);border-radius:16px;padding:16px;box-shadow:0 8px 24px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.04)}
+  header{display:flex;gap:12px;align-items:center;justify-content:space-between;margin-bottom:8px}
+  .title{font-weight:700;font-size:clamp(18px,3.6vw,26px);letter-spacing:.2px;display:flex;align-items:center;gap:10px}
+  .badge{font-size:12px;padding:2px 8px;border-radius:999px;background:rgba(138,209,255,.12);color:var(--accent);border:1px solid rgba(138,209,255,.25)}
   .muted{color:var(--muted);font-size:12px}
-  .grid{display:grid;gap:16px;grid-template-columns:1fr;align-items:stretch}
-  @media (min-width:1040px){.grid{grid-template-columns:1.2fr .8fr}}
-  .controls{display:grid;grid-template-columns:1fr;gap:14px;margin:10px 0 8px}
-  @media (min-width:960px){.controls{grid-template-columns:1.2fr 1fr 1.1fr 1fr}}
+  /* Always horizontal layout */
+  .grid{display:grid;gap:12px;grid-template-columns:1.2fr .9fr;align-items:stretch}
+  .controls{display:grid;grid-template-columns:1.2fr 1fr 1.1fr 1fr;gap:12px;margin:8px 0 6px}
+  @media (max-width:820px){ .controls{grid-template-columns:1fr 1fr; } .grid{grid-template-columns:1fr; } }
   label{font-size:12px;color:var(--muted);display:block;margin-bottom:6px}
   select,input[type="range"],input[type="time"],input[type="number"],.btn{
     width:100%;border:1px solid rgba(255,255,255,0.08);background:rgba(255,255,255,0.03);color:var(--text);
-    border-radius:12px;padding:10px 12px;font-size:14px;outline:none
+    border-radius:12px;padding:8px 10px;font-size:14px;outline:none
   }
   select:focus,input:focus,.btn:focus{box-shadow:0 0 0 3px rgba(138,209,255,0.25)}
   .btn{cursor:pointer;text-align:center;user-select:none;transition:transform .05s ease}
   .btn:active{transform:translateY(1px)}
   .btn.primary{background:linear-gradient(180deg, rgba(138,209,255,.18), rgba(138,209,255,.08)); border-color:rgba(138,209,255,.35)}
   .btn.ghost{background:rgba(255,255,255,0.03)}
-  .row{display:flex;gap:10px}.row>.btn{flex:1}
-  .section{margin-top:14px;padding:14px;border:1px solid rgba(255,255,255,0.06);border-radius:12px;background:rgba(255,255,255,0.03); position:relative; z-index:2 }
-  .section h3{margin:0 0 8px 0;font-size:16px}
-  .two-col{display:grid;grid-template-columns:1fr;gap:10px}
-  @media (min-width:620px){.two-col{grid-template-columns:1fr 1fr}}
-  .pacer-wrap{position:relative;aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;background:radial-gradient(40% 40% at 50% 50%, rgba(138,209,255,.1), rgba(255,255,255,.02));border-radius:18px;overflow:hidden;border:1px solid rgba(255,255,255,0.06); z-index:1; max-height:80vh }
-  .pacer{width:min(360px,70%);aspect-ratio:1/1;border-radius:50%;border:2px solid var(--ring);box-shadow:0 0 60px 10px var(--ring), inset 0 0 50px rgba(138,209,255,.12);display:flex;align-items:center;justify-content:center;transform:scale(.88);transition:transform var(--phase-ms,3000ms) linear}
-  .pacer .dot{width:14px;height:14px;border-radius:50%;background:var(--accent);box-shadow:0 0 20px var(--accent),0 0 50px var(--accent);opacity:.9}
+  .row{display:flex;gap:8px}.row>.btn{flex:1}
+  .section{margin-top:10px;padding:12px;border:1px solid rgba(255,255,255,0.06);border-radius:12px;background:rgba(255,255,255,0.03); position:relative; z-index:2 }
+  .section h3{margin:0 0 6px 0;font-size:15px}
+  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  @media (max-width:820px){.two-col{grid-template-columns:1fr}}
+  .pacer-wrap{position:relative;aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;background:radial-gradient(40% 40% at 50% 50%, rgba(138,209,255,.1), rgba(255,255,255,.02));border-radius:18px;overflow:hidden;border:1px solid rgba(255,255,255,0.06); z-index:1; max-height:60vh }
+  .pacer{width:min(300px,60%);aspect-ratio:1/1;border-radius:50%;border:2px solid var(--ring);box-shadow:0 0 50px 8px var(--ring), inset 0 0 40px rgba(138,209,255,.12);display:flex;align-items:center;justify-content:center;transform:scale(.88);transition:transform var(--phase-ms,3000ms) linear}
+  .pacer .dot{width:12px;height:12px;border-radius:50%;background:var(--accent);box-shadow:0 0 18px var(--accent),0 0 40px var(--accent);opacity:.9}
   [data-phase="inhale"] .pacer{transform:scale(1.06)}
   [data-phase="exhale"] .pacer{transform:scale(.88)}
   [data-phase="hold"] .pacer{transform:scale(.97)}
-  .hud{position:absolute;inset:10px 10px auto 10px;display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--muted); pointer-events:none }
-  .timer{position:absolute;inset:auto 0 24px 0;text-align:center;font-size:clamp(22px,5vw,48px);font-weight:700;letter-spacing:1.2px; pointer-events:none}
-  .phase{position:absolute;inset:auto 0 80px 0;text-align:center;font-size:clamp(14px,3vw,18px);color:var(--muted); pointer-events:none}
-  .mantra{position:absolute;inset:auto 0 120px 0;text-align:center;font-size:clamp(34px,7vw,56px);font-weight:700;letter-spacing:1.5px;opacity:.18;user-select:none;pointer-events:none}
-  footer{margin-top:12px;color:var(--muted);font-size:12px;text-align:center}
+  .hud{position:absolute;inset:8px 8px auto 8px;display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--muted); pointer-events:none }
+  .timer{position:absolute;inset:auto 0 18px 0;text-align:center;font-size:clamp(18px,4.5vw,40px);font-weight:700;letter-spacing:1.2px; pointer-events:none}
+  .phase{position:absolute;inset:auto 0 66px 0;text-align:center;font-size:clamp(13px,3vw,17px);color:var(--muted); pointer-events:none}
+  .mantra{position:absolute;inset:auto 0 102px 0;text-align:center;font-size:clamp(28px,6vw,48px);font-weight:700;letter-spacing:1.5px;opacity:.18;user-select:none;pointer-events:none}
+  footer{margin-top:8px;color:var(--muted);font-size:12px;text-align:center}
   .inline{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
   .pill{padding:6px 10px;border-radius:999px;background:rgba(255,255,255,.06);font-size:12px;color:var(--muted)}
   .ok{color:var(--good)} .warn{color:var(--warn)}
@@ -67,7 +69,7 @@
   <div class="app">
     <div class="card">
       <header>
-        <div class="title">🧘‍♂️ Break &amp; Breathe <span class="badge">MVP v2.3</span></div>
+        <div class="title">🧘‍♂️ Break &amp; Breathe <span class="badge">MVP v2.4</span></div>
         <div class="muted">Space = start/pause · R = reset</div>
       </header>
 
@@ -116,7 +118,7 @@
           <div class="timer" id="timer">20:00</div>
         </div>
 
-        <!-- Right column: posture + scheduling -->
+        <!-- Right column: posture + scheduling + voice -->
         <div>
           <div class="section">
             <h3>Posture Check</h3>
@@ -176,8 +178,21 @@
           </div>
 
           <div class="section">
-            <h3>Voice Settings</h3>
+            <h3>Voice Settings & Voices</h3>
             <div class="two-col">
+              <div>
+                <label for="voiceSelect">Choose Voice</label>
+                <select id="voiceSelect"></select>
+              </div>
+              <div>
+                <label>Quick pick</label>
+                <div class="row">
+                  <button id="pickFemale" class="btn ghost" type="button">♀ Prefer Female</button>
+                  <button id="pickMale" class="btn ghost" type="button">♂ Prefer Male</button>
+                </div>
+              </div>
+            </div>
+            <div class="two-col" style="margin-top:8px">
               <div>
                 <label for="voiceRate">Rate (speed): <span id="rateLbl">0.9</span></label>
                 <input id="voiceRate" type="range" min="0.6" max="1.4" step="0.05" value="0.9">
@@ -199,6 +214,7 @@
                 </div>
               </div>
             </div>
+            <p class="muted" style="margin-top:8px">Note: Available voices vary by browser/OS. Safari on iOS offers fewer voices.</p>
           </div>
 
           <div class="section">
@@ -251,13 +267,13 @@ try{
   const workStatus = document.getElementById('workStatus');
   const testReminderBtn = document.getElementById('testReminder');
 
-  // Voice controls
-  const voiceRate = document.getElementById('voiceRate');
-  const rateLbl = document.getElementById('rateLbl');
-  const voicePitch = document.getElementById('voicePitch');
-  const pitchLbl = document.getElementById('pitchLbl');
-  const voiceVol = document.getElementById('voiceVol');
-  const volLbl = document.getElementById('volLbl');
+  // Voice controls/selectors
+  const voiceSelect = document.getElementById('voiceSelect');
+  const pickFemale = document.getElementById('pickFemale');
+  const pickMale = document.getElementById('pickMale');
+  const voiceRate = document.getElementById('voiceRate'); const rateLbl = document.getElementById('rateLbl');
+  const voicePitch = document.getElementById('voicePitch'); const pitchLbl = document.getElementById('pitchLbl');
+  const voiceVol = document.getElementById('voiceVol'); const volLbl = document.getElementById('volLbl');
   const saySample = document.getElementById('saySample');
 
   // State
@@ -265,29 +281,39 @@ try{
   let phase='ready', phaseRemaining=0, pattern=[];
   let soundOn=false, mantraOn=true, guidedOn=true;
   let workActive=false, nextBreakAt=null, nextStretchAt=null, schedulerTimer=null;
+  let voices=[], selectedVoiceName=null;
 
   // Persistence
-  const VSET = {
-    k:'bb_voice_settings_v1',
-    save(){ localStorage.setItem(this.k, JSON.stringify({rate:voiceRate.value, pitch:voicePitch.value, vol:voiceVol.value})) },
-    load(){ try{ const s=JSON.parse(localStorage.getItem(this.k)||'{}'); if(s.rate) voiceRate.value=s.rate; if(s.pitch) voicePitch.value=s.pitch; if(s.vol) voiceVol.value=s.vol; }catch(e){} }
+  const STORE = {
+    kVoice: 'bb_voice_choice_v1',
+    kParams: 'bb_voice_settings_v1',
+    saveVoice(name){ localStorage.setItem(this.kVoice, name || '') },
+    loadVoice(){ return localStorage.getItem(this.kVoice) || '' },
+    saveParams(){ localStorage.setItem(this.kParams, JSON.stringify({rate:voiceRate.value, pitch:voicePitch.value, vol:voiceVol.value})) },
+    loadParams(){ try{ const s=JSON.parse(localStorage.getItem(this.kParams)||'{}'); if(s.rate) voiceRate.value=s.rate; if(s.pitch) voicePitch.value=s.pitch; if(s.vol) voiceVol.value=s.vol; }catch(e){} }
   };
 
   // Stats render
   function renderStats(){
     try{
       const s = JSON.parse(localStorage.getItem('bb_stats_v1') || '{}');
-      statsEl.innerHTML = `
-        <span class="pill">Sessions: <span class="ok">${s.sessions||0}</span></span>
-        <span class="pill">Total minutes: <span class="ok">${s.totalMin||0}</span></span>
-        ${s.last ? `<span class="pill">Last: ${new Date(s.last).toLocaleString()}</span>` : ''}
-      `;
+      statsEl.innerHTML = \`
+        <span class="pill">Sessions: <span class="ok">\${s.sessions||0}</span></span>
+        <span class="pill">Total minutes: <span class="ok">\${s.totalMin||0}</span></span>
+        \${s.last ? \`<span class="pill">Last: \${new Date(s.last).toLocaleString()}</span>\` : ''}
+      \`;
     }catch(e){ statsEl.textContent = ''; }
   }
 
   // Helpers
-  function fmt(sec){ sec=Math.max(0,Math.round(sec)); const m=Math.floor(sec/60),s=sec%60; return `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`; }
+  function fmt(sec){ sec=Math.max(0,Math.round(sec)); const m=Math.floor(sec/60),s=sec%60; return \`\${String(m).padStart(2,'0')}:\${String(s).padStart(2,'0')}\`; }
   function voiceParams(){ return {rate: parseFloat(voiceRate.value), pitch: parseFloat(voicePitch.value), vol: parseFloat(voiceVol.value)} }
+  function getSelectedVoice(){
+    const name = selectedVoiceName || STORE.loadVoice();
+    if(!voices || !voices.length) return null;
+    let v = voices.find(v=>v.name===name) || voices[0];
+    return v || null;
+  }
   function setPhase(newPhase, ms){
     phase=newPhase; stage.dataset.phase=(newPhase==='hold'?'hold':newPhase);
     phaseEl.textContent=(newPhase==='hold')?'Hold':(newPhase.charAt(0).toUpperCase()+newPhase.slice(1));
@@ -330,7 +356,7 @@ try{
       try{ const s=JSON.parse(localStorage.getItem('bb_stats_v1')||'{}'); s.sessions=(s.sessions||0)+1; s.totalMin=(s.totalMin||0)+Math.round(sessionSeconds/60); s.last=new Date().toISOString(); localStorage.setItem('bb_stats_v1', JSON.stringify(s)); renderStats(); }catch(e){}
       return;
     }
-    timerEl.textContent=fmt(remaining); const pct=((sessionSeconds-remaining)/sessionSeconds)*100; progressEl.textContent=`${Math.min(100, Math.floor(pct))}%`;
+    timerEl.textContent=fmt(remaining); const pct=((sessionSeconds-remaining)/sessionSeconds)*100; progressEl.textContent=\`\${Math.min(100, Math.floor(pct))}%\`;
     if(phaseRemaining<=0){ const idx=(pattern._idx||0)%pattern.length; const step=pattern[idx]; pattern._idx=idx+1; phaseRemaining=step.secs; setPhase(step.phase, step.secs*1000); }
     phaseRemaining-=dt; requestAnimationFrame(tick);
   }
@@ -345,8 +371,10 @@ try{
   }
   function speak(text){
     try{
-      const p=voiceParams();
       const msg=new SpeechSynthesisUtterance(text);
+      const p=voiceParams();
+      const v=getSelectedVoice();
+      if(v) msg.voice=v;
       msg.rate=p.rate; msg.pitch=p.pitch; msg.volume=p.vol;
       window.speechSynthesis.cancel();
       window.speechSynthesis.speak(msg);
@@ -381,6 +409,39 @@ try{
     if(nextBreakAt && now>=nextBreakAt){ announce('It is time to take a break.'); scheduleNextBreak(now); }
   }
 
+  // Voice list population
+  function guessGender(name){
+    const n = (name||'').toLowerCase();
+    const fem = ['samantha','victoria','karen','moira','susan','fiona','vicki','ellie','zira','zira','joanna','olivia','amy','emma','sara','sarah','luna','natalie','salli'];
+    const male = ['alex','daniel','fred','leo','mike','michael','john','brian','ryan','liam','arthur','tom','joey','justin','matthew'];
+    if(fem.some(x=>n.includes(x))) return '♀';
+    if(male.some(x=>n.includes(x))) return '♂';
+    return '•';
+  }
+  function populateVoices(){
+    voices = window.speechSynthesis.getVoices();
+    voiceSelect.innerHTML = '';
+    const stored = STORE.loadVoice();
+    voices.forEach(v => {
+      const opt = document.createElement('option');
+      opt.value = v.name;
+      const badge = guessGender(v.name);
+      opt.textContent = \`\${badge} \${v.name} — \${v.lang}\`;
+      voiceSelect.appendChild(opt);
+    });
+    // Restore previous choice or pick a reasonable default
+    const target = stored && voices.find(v=>v.name===stored) ? stored : (voices.find(v=>/samantha|victoria|joanna|olivia/i.test(v.name))?.name || voices[0]?.name);
+    if(target){
+      voiceSelect.value = target;
+      selectedVoiceName = target;
+      STORE.saveVoice(target);
+    }
+  }
+  if('speechSynthesis' in window){
+    populateVoices();
+    window.speechSynthesis.onvoiceschanged = populateVoices;
+  }
+
   // Events
   startPauseBtn.addEventListener('click', ()=>{ ensureAudio(); if(!running){ if(remaining<=0) resetSession(); running=true; statusEl.textContent='In session'; pattern=computePattern(); requestAnimationFrame(t=>{lastTick=t; tick(t)}); startPauseBtn.textContent='⏸ Pause'; } else { running=false; statusEl.textContent='Paused'; startPauseBtn.textContent='▶ Resume'; } });
   resetBtn.addEventListener('click', resetSession);
@@ -395,16 +456,27 @@ try{
   stopWorkBtn.addEventListener('click', ()=>{ workActive=false; workStatus.textContent='stopped'; workStatus.className='warn'; nextBreakAt=null; nextStretchAt=null; nextBreakLabel.textContent='—'; if(schedulerTimer){ clearInterval(schedulerTimer); schedulerTimer=null; } });
   testReminderBtn.addEventListener('click', ()=>{ ensureAudio(); announce('It is time to take a break.'); });
 
-  // Voice settings
+  // Voice UI
   function updateVoiceLabels(){ rateLbl.textContent=voiceRate.value; pitchLbl.textContent=voicePitch.value; volLbl.textContent=voiceVol.value; }
-  [voiceRate, voicePitch, voiceVol].forEach(el=>{ el.addEventListener('input', ()=>{ updateVoiceLabels(); VSET.save(); }); });
+  [voiceRate, voicePitch, voiceVol].forEach(el=>{ el.addEventListener('input', ()=>{ updateVoiceLabels(); STORE.saveParams(); }); });
+  voiceSelect.addEventListener('change', ()=>{ selectedVoiceName=voiceSelect.value; STORE.saveVoice(selectedVoiceName); speak('Voice selected'); });
+  pickFemale.addEventListener('click', ()=>{
+    const v = voices.find(v=>/samantha|victoria|karen|moira|fiona|joanna|olivia|amy|emma|sara|salli/i.test(v.name));
+    if(v){ selectedVoiceName=v.name; voiceSelect.value=v.name; STORE.saveVoice(v.name); speak('Female voice selected'); }
+    else{ speak('No female voice detected on this device'); }
+  });
+  pickMale.addEventListener('click', ()=>{
+    const v = voices.find(v=>/alex|daniel|fred|michael|brian|ryan|liam|arthur|tom|joey|justin|matthew/i.test(v.name));
+    if(v){ selectedVoiceName=v.name; voiceSelect.value=v.name; STORE.saveVoice(v.name); speak('Male voice selected'); }
+    else{ speak('No male voice detected on this device'); }
+  });
   saySample.addEventListener('click', ()=>{ ensureAudio(); speak('This is your guided voice sample.'); });
 
   // Restore posture checklist
   for(let i=1;i<=6;i++){ const el=document.getElementById('p'+i); const key='bb_posture_'+i; if(!el) continue; el.checked=localStorage.getItem(key)==='1'; el.addEventListener('change', ()=>{ localStorage.setItem(key, el.checked?'1':'0'); }); }
 
   // Init
-  VSET.load(); updateVoiceLabels();
+  STORE.loadParams(); updateVoiceLabels();
   function updateDurationLabel(){ durationLabel.textContent=durationEl.value } updateDurationLabel();
   resetSession(); renderStats();
   if('serviceWorker' in navigator){ window.addEventListener('load', ()=>{ navigator.serviceWorker.register('./service-worker.js').catch(()=>{}); }); }

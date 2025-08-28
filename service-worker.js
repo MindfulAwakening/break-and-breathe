@@ -1,5 +1,5 @@
 // Cache for offline support
-const CACHE = 'break-breathe-v2-3';
+const CACHE = 'break-breathe-v2-4';
 const ASSETS = ['./','./index.html','./manifest.webmanifest'];
 
 self.addEventListener('install', (e) => {
