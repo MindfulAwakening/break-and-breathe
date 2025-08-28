@@ -1,0 +1,9 @@
+{
+  "name": "Break & Breathe \u2014 Timed Meditation Breaks",
+  "short_name": "Break & Breathe",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#0b1324",
+  "theme_color": "#0b1324",
+  "icons": []
+}
