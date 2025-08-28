@@ -1,30 +1,18 @@
-# Break & Breathe — Timed Meditation Breaks
+# Break & Breathe — MVP v2
 
-A tiny, elegant web app that guides **10–30 minute** meditation breaks with **Yogananda-inspired Hong–Sau** breathing, posture reminders, optional chimes, and a soothing breath pacer. Fully client-side, no dependencies.
+Adds **Work Hours + Break Reminders + Stretch Prompt + Voice/Chime** to the original MVP.
 
-## Features
-- 10–30 minute session timer (slider)
-- Breathing modes: **Hong–Sau**, **Equal**, **Box 4–4–4–4**, **4–7–8**
-- Visual breath pacer + mantra overlay
-- Optional sound chimes (WebAudio)
-- Posture checklist (saved in local storage)
-- Basic stats (sessions, total minutes)
-- Installable PWA + offline (service worker)
+## Quick Start
+Open `index.html` locally or deploy to GitHub Pages (Settings → Pages → Deploy from a branch → `main` / root).
 
-## Quick Start (local)
-Just open `index.html` in your browser. No build step.
+## How to Use
+1) Set your **work hours** and **break cadence**.  
+2) Choose **Reminder style** (Voice, Chime, or Both).  
+3) Click **Start Workday** and keep the tab open.  
+4) At stretch time you’ll hear “Time to stand and stretch.”  
+5) At break time you’ll hear “Break time. Stand, stretch, then begin your breathing practice.”
 
-## Deploy to GitHub Pages
-1. Create a repo on GitHub, e.g. `break-and-breathe`.
-2. Add these files to the repo:
-   - `index.html`
-   - `manifest.webmanifest`
-   - `service-worker.js`
-   - `LICENSE`
-   - `README.md`
-3. Commit & push to `main`.
-4. Repo **Settings → Pages** → Source: **Deploy from a branch** → Branch: `main` (root). Save.
-5. Your site will be live at `https://<your-username>.github.io/<repo-name>/`.
-
-## License
-MIT
+## Notes
+- Voice uses the **Web Speech API**; chime uses **WebAudio**. Some browsers require a user gesture (click Start Workday) before audio plays.
+- Settings persist in localStorage.
+- PWA files included for offline support.

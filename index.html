@@ -3,64 +3,61 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Break & Breathe — Timed Meditation Breaks</title>
-<meta name="description" content="Timed meditation breaks (10–30 min) with Yogananda-inspired Hong-Sau breathing, posture checks, chimes, and a calming breath pacer.">
+<title>Break & Breathe — Timed Meditation Breaks (v2)</title>
+<meta name="description" content="Timed meditation breaks (10–30 min) with Hong-Sau breathing, posture checks, chimes, voice reminders, work hours scheduling, and stretch prompts.">
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#0b1324">
 <style>
   :root{
-    --bg: #0b1324;
-    --card: #121c34;
-    --accent: #8ad1ff;
-    --text: #e8f0ff;
-    --muted: #a9b8d6;
-    --ring: rgba(138,209,255,0.25);
+    --bg:#0b1324; --card:#121c34; --accent:#8ad1ff; --text:#e8f0ff; --muted:#a9b8d6; --ring:rgba(138,209,255,0.25);
+    --good:#5ee4a7; --warn:#ffc76b;
   }
   *{box-sizing:border-box}
   html,body{height:100%}
-  body{
-    margin:0;
-    font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans";
+  body{margin:0;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial,"Noto Sans";
     color:var(--text);
-    background:
-      radial-gradient(1200px 600px at 80% -10%, #1e2a4d 0%, transparent 60%),
-      radial-gradient(900px 400px at -10% 120%, #1b2747 0%, transparent 60%),
-      var(--bg);
-    display:flex;align-items:center;justify-content:center;
-    padding:24px;
-  }
-  .app{width:min(1000px, 100%);backdrop-filter: blur(8px);}
-  .card{background: linear-gradient(180deg, rgba(18,28,52,0.9), rgba(13,20,38,0.92));border:1px solid rgba(255,255,255,0.06);border-radius:16px;padding:20px;box-shadow:0 10px 30px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.04)}
+    background: radial-gradient(1200px 600px at 80% -10%, #1e2a4d 0%, transparent 60%),
+                radial-gradient(900px 400px at -10% 120%, #1b2747 0%, transparent 60%), var(--bg);
+    display:flex;align-items:center;justify-content:center;padding:24px}
+  .app{width:min(1100px,100%);backdrop-filter:blur(8px)}
+  .card{background:linear-gradient(180deg, rgba(18,28,52,0.9), rgba(13,20,38,0.92));border:1px solid rgba(255,255,255,0.06);border-radius:16px;padding:20px;box-shadow:0 10px 30px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.04)}
   header{display:flex;gap:16px;align-items:center;justify-content:space-between;margin-bottom:12px}
-  .title{font-weight:700;font-size:clamp(20px, 4vw, 28px);letter-spacing:0.2px;display:flex;align-items:center;gap:12px}
-  .badge{font-size:12px;padding:4px 8px;border-radius:999px;background:rgba(138,209,255,0.12);color:var(--accent);border:1px solid rgba(138,209,255,0.25)}
+  .title{font-weight:700;font-size:clamp(20px,4vw,28px);letter-spacing:.2px;display:flex;align-items:center;gap:12px}
+  .badge{font-size:12px;padding:4px 8px;border-radius:999px;background:rgba(138,209,255,.12);color:var(--accent);border:1px solid rgba(138,209,255,.25)}
+  .muted{color:var(--muted);font-size:12px}
+  .grid{display:grid;gap:16px;grid-template-columns:1fr;align-items:stretch}
+  @media (min-width:1040px){.grid{grid-template-columns:1.2fr .8fr}}
   .controls{display:grid;grid-template-columns:1fr;gap:14px;margin:10px 0 8px}
-  @media (min-width:720px){.controls{grid-template-columns:1.2fr 1fr 1fr 1fr}}
+  @media (min-width:760px){.controls{grid-template-columns:1.2fr 1fr 1fr 1fr}}
   label{font-size:12px;color:var(--muted);display:block;margin-bottom:6px}
-  select,input[type="range"],.btn{width:100%;border:1px solid rgba(255,255,255,0.08);background:rgba(255,255,255,0.03);color:var(--text);border-radius:12px;padding:10px 12px;font-size:14px;outline:none}
-  select:focus,input[type="range"]:focus,.btn:focus{box-shadow:0 0 0 3px rgba(138,209,255,0.25)}
+  select,input[type="range"],input[type="time"],input[type="number"],.btn{
+    width:100%;border:1px solid rgba(255,255,255,0.08);background:rgba(255,255,255,0.03);color:var(--text);
+    border-radius:12px;padding:10px 12px;font-size:14px;outline:none
+  }
+  select:focus,input:focus,.btn:focus{box-shadow:0 0 0 3px rgba(138,209,255,0.25)}
   .btn{cursor:pointer;text-align:center;user-select:none;transition:transform .05s ease}
   .btn:active{transform:translateY(1px)}
-  .btn.primary{background:linear-gradient(180deg, rgba(138,209,255,0.18), rgba(138,209,255,0.08));border-color:rgba(138,209,255,0.35)}
+  .btn.primary{background:linear-gradient(180deg, rgba(138,209,255,.18), rgba(138,209,255,.08)); border-color:rgba(138,209,255,.35)}
   .btn.ghost{background:rgba(255,255,255,0.03)}
   .row{display:flex;gap:10px}.row>.btn{flex:1}
-  .grid{display:grid;gap:16px;grid-template-columns:1fr;align-items:stretch}
-  @media (min-width:940px){.grid{grid-template-columns:1.2fr 0.8fr}}
-  .pacer-wrap{position:relative;aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;background:radial-gradient(40% 40% at 50% 50%, rgba(138,209,255,0.1), rgba(255,255,255,0.02));border-radius:18px;overflow:hidden;border:1px solid rgba(255,255,255,0.06)}
-  .pacer{width:min(360px,70%);aspect-ratio:1/1;border-radius:50%;border:2px solid var(--ring);box-shadow:0 0 60px 10px var(--ring), inset 0 0 50px rgba(138,209,255,0.12);display:flex;align-items:center;justify-content:center;transform:scale(0.88);transition:transform var(--phase-ms, 3000ms) linear}
-  .pacer .dot{width:14px;height:14px;border-radius:50%;background:var(--accent);box-shadow:0 0 20px var(--accent),0 0 50px var(--accent);opacity:0.9}
-  [data-phase="inhale"] .pacer{transform:scale(1.06)} [data-phase="exhale"] .pacer{transform:scale(0.88)} [data-phase="hold"] .pacer{transform:scale(0.97)}
+  .section{margin-top:14px;padding:14px;border:1px solid rgba(255,255,255,0.06);border-radius:12px;background:rgba(255,255,255,0.03)}
+  .section h3{margin:0 0 8px 0;font-size:16px}
+  .two-col{display:grid;grid-template-columns:1fr;gap:10px}
+  @media (min-width:620px){.two-col{grid-template-columns:1fr 1fr}}
+  .pacer-wrap{position:relative;aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;background:radial-gradient(40% 40% at 50% 50%, rgba(138,209,255,.1), rgba(255,255,255,.02));border-radius:18px;overflow:hidden;border:1px solid rgba(255,255,255,0.06)}
+  .pacer{width:min(360px,70%);aspect-ratio:1/1;border-radius:50%;border:2px solid var(--ring);box-shadow:0 0 60px 10px var(--ring), inset 0 0 50px rgba(138,209,255,.12);display:flex;align-items:center;justify-content:center;transform:scale(.88);transition:transform var(--phase-ms,3000ms) linear}
+  .pacer .dot{width:14px;height:14px;border-radius:50%;background:var(--accent);box-shadow:0 0 20px var(--accent),0 0 50px var(--accent);opacity:.9}
+  [data-phase="inhale"] .pacer{transform:scale(1.06)}
+  [data-phase="exhale"] .pacer{transform:scale(.88)}
+  [data-phase="hold"] .pacer{transform:scale(.97)}
   .hud{position:absolute;inset:10px 10px auto 10px;display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--muted)}
   .timer{position:absolute;inset:auto 0 24px 0;text-align:center;font-size:clamp(22px,5vw,48px);font-weight:700;letter-spacing:1.2px}
   .phase{position:absolute;inset:auto 0 80px 0;text-align:center;font-size:clamp(14px,3vw,18px);color:var(--muted)}
-  .mantra{position:absolute;inset:auto 0 120px 0;text-align:center;font-size:clamp(34px,7vw,56px);font-weight:700;letter-spacing:1.5px;opacity:0.18;user-select:none;pointer-events:none}
-  .posture{padding:14px;border:1px solid rgba(255,255,255,0.06);border-radius:12px;background:rgba(255,255,255,0.03)}
-  .posture h3{margin:0 0 8px 0;font-size:16px}
-  .check{display:flex;align-items:flex-start;gap:10px;margin:8px 0;font-size:14px}
-  .check input{margin-top:3px}
-  .muted{color:var(--muted);font-size:13px}
-  .stats{display:flex;gap:16px;flex-wrap:wrap;margin-top:12px;color:var(--muted);font-size:13px}
+  .mantra{position:absolute;inset:auto 0 120px 0;text-align:center;font-size:clamp(34px,7vw,56px);font-weight:700;letter-spacing:1.5px;opacity:.18;user-select:none;pointer-events:none}
   footer{margin-top:12px;color:var(--muted);font-size:12px;text-align:center}
+  .inline{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  .pill{padding:6px 10px;border-radius:999px;background:rgba(255,255,255,.06);font-size:12px;color:var(--muted)}
+  .ok{color:var(--good)} .warn{color:var(--warn)}
   @media (prefers-reduced-motion: reduce){.pacer{transition:none;transform:scale(1)}[data-phase] .pacer{transform:scale(1)}}
 </style>
 </head>
@@ -68,10 +65,11 @@
   <div class="app">
     <div class="card">
       <header>
-        <div class="title">🧘‍♂️ Break &amp; Breathe <span class="badge">MVP</span></div>
+        <div class="title">🧘‍♂️ Break &amp; Breathe <span class="badge">MVP v2</span></div>
         <div class="muted">Space = start/pause · R = reset</div>
       </header>
 
+      <!-- Core breathing controls -->
       <div class="controls">
         <div>
           <label for="mode">Breathing Mode</label>
@@ -89,7 +87,7 @@
         </div>
 
         <div>
-          <label for="sound">Sound &amp; Mantra</label>
+          <label>Sound &amp; Mantra</label>
           <div class="row">
             <button id="sound" class="btn ghost" aria-pressed="false" aria-label="Toggle chime">🔔 Chime: Off</button>
             <button id="mantraBtn" class="btn ghost" aria-pressed="true" aria-label="Toggle mantra text">🕉️ Mantra: On</button>
@@ -106,34 +104,84 @@
       </div>
 
       <div class="grid">
+        <!-- Pacer / Timer -->
         <div class="pacer-wrap card" id="stage" data-phase="ready" aria-live="polite" aria-atomic="true">
           <div class="hud">
             <div id="status" class="muted">Ready</div>
             <div id="progress" class="muted">0%</div>
           </div>
-
           <div class="pacer" id="pacer" aria-hidden="true"><div class="dot"></div></div>
           <div class="mantra" id="mantra" aria-hidden="true"></div>
           <div class="phase" id="phase">—</div>
           <div class="timer" id="timer">20:00</div>
         </div>
 
-        <div class="posture">
-          <h3>Posture Check</h3>
-          <div class="check"><input type="checkbox" id="p1"><label for="p1">Feet grounded and balanced (or sit bones rooted if on cushion)</label></div>
-          <div class="check"><input type="checkbox" id="p2"><label for="p2">Spine tall, natural curves; chin gently tucked (“long neck”)</label></div>
-          <div class="check"><input type="checkbox" id="p3"><label for="p3">Shoulders melt down; chest open but soft</label></div>
-          <div class="check"><input type="checkbox" id="p4"><label for="p4">Jaw unclenched; tongue relaxed on the roof of mouth</label></div>
-          <div class="check"><input type="checkbox" id="p5"><label for="p5">Eyes softly closed or half-closed; gaze turned inward</label></div>
-          <div class="check"><input type="checkbox" id="p6"><label for="p6">Hands resting comfortably (palms up or down)</label></div>
-          <details style="margin-top:8px">
-            <summary class="muted">Why Hong-Sau?</summary>
-            <div class="muted" style="margin-top:8px">
-              Hong-Sau pairs natural breathing with the mental sounds “Hong” (in-breath) and “Sau” (out-breath).
-              Let the breath remain easy—don’t force the counts. If the pacer’s rhythm doesn’t suit you, simply observe your breath.
+        <!-- Right column: posture + scheduling -->
+        <div>
+          <div class="section">
+            <h3>Posture Check</h3>
+            <div class="two-col">
+              <label class="inline"><input type="checkbox" id="p1"> Feet grounded / sit bones rooted</label>
+              <label class="inline"><input type="checkbox" id="p2"> Spine tall; chin gently tucked</label>
+              <label class="inline"><input type="checkbox" id="p3"> Shoulders down; chest soft</label>
+              <label class="inline"><input type="checkbox" id="p4"> Jaw unclenched; tongue relaxed</label>
+              <label class="inline"><input type="checkbox" id="p5"> Eyes soft; inward gaze</label>
+              <label class="inline"><input type="checkbox" id="p6"> Hands resting comfortably</label>
             </div>
-          </details>
-          <div class="stats" id="stats"></div>
+          </div>
+
+          <div class="section">
+            <h3>Work Hours & Break Reminders</h3>
+            <div class="two-col">
+              <div>
+                <label for="workStart">Workday starts</label>
+                <input type="time" id="workStart" value="08:00">
+              </div>
+              <div>
+                <label for="workEnd">Workday ends</label>
+                <input type="time" id="workEnd" value="17:00">
+              </div>
+              <div>
+                <label for="breakEvery">Break every (minutes)</label>
+                <input id="breakEvery" type="number" min="15" max="180" step="5" value="60">
+              </div>
+              <div>
+                <label for="stretchLead">Stretch reminder (minutes before break)</label>
+                <input id="stretchLead" type="number" min="0" max="10" step="1" value="2">
+              </div>
+            </div>
+            <div class="two-col" style="margin-top:8px">
+              <div>
+                <label>Reminder style</label>
+                <select id="reminderStyle">
+                  <option value="voice">Voice (spoken)</option>
+                  <option value="chime">Chime</option>
+                  <option value="both">Both</option>
+                </select>
+              </div>
+              <div>
+                <label>&nbsp;</label>
+                <div class="row">
+                  <button id="startWork" class="btn primary">🟢 Start Workday</button>
+                  <button id="stopWork" class="btn ghost">⛔ Stop</button>
+                </div>
+              </div>
+            </div>
+            <div class="inline" style="margin-top:10px">
+              <span class="pill">Next break: <span id="nextBreakLabel">—</span></span>
+              <span class="pill">Status: <span id="workStatus" class="warn">stopped</span></span>
+              <button id="testReminder" class="btn ghost">Test announcement</button>
+            </div>
+            <p class="muted" style="margin-top:8px">Keep this tab open. Audio may require one click (e.g., Start Workday) to enable sound.</p>
+          </div>
+
+          <div class="section">
+            <details>
+              <summary class="muted">Why Hong-Sau?</summary>
+              <p class="muted">Hong-Sau pairs natural breathing with the mental sounds “Hong” (in-breath) and “Sau” (out-breath). Let the breath remain easy—don’t force the counts. If the pacer’s rhythm doesn’t suit you, simply observe your breath.</p>
+            </details>
+            <div class="inline" id="stats" style="margin-top:8px"></div>
+          </div>
         </div>
       </div>
 
@@ -145,6 +193,7 @@
 
 <script>
 (() => {
+  // ----- Existing core selectors
   const modeEl = document.getElementById('mode');
   const durationEl = document.getElementById('duration');
   const durationLabel = document.getElementById('durationLabel');
@@ -162,52 +211,87 @@
   const progressEl = document.getElementById('progress');
   const statsEl = document.getElementById('stats');
 
+  // ----- New scheduling selectors
+  const workStartEl = document.getElementById('workStart');
+  const workEndEl = document.getElementById('workEnd');
+  const breakEveryEl = document.getElementById('breakEvery');
+  const stretchLeadEl = document.getElementById('stretchLead');
+  const reminderStyleEl = document.getElementById('reminderStyle');
+  const startWorkBtn = document.getElementById('startWork');
+  const stopWorkBtn = document.getElementById('stopWork');
+  const nextBreakLabel = document.getElementById('nextBreakLabel');
+  const workStatus = document.getElementById('workStatus');
+  const testReminderBtn = document.getElementById('testReminder');
+
+  // ----- State
   let running = false;
   let sessionSeconds = parseInt(durationEl.value, 10) * 60;
   let remaining = sessionSeconds;
   let lastTick = null;
 
-  let phase = 'ready';
+  let phase = 'ready'; // inhale | exhale | hold | ready | done
   let phaseRemaining = 0;
   let pattern = [];
 
   let soundOn = false;
   let mantraOn = true;
 
-  const store = {
-    get k(){ return 'bb_stats_v1' },
-    read(){ try{ return JSON.parse(localStorage.getItem(this.k) || '{}') }catch(e){ return {} } },
+  // Workday reminder state
+  let workActive = false;
+  let nextBreakAt = null;   // Date
+  let nextStretchAt = null; // Date
+  let schedulerTimer = null;
+
+  // Stats store (re-use)
+  function renderStats(){
+    try{
+      const s = JSON.parse(localStorage.getItem('bb_stats_v1') || '{}');
+      statsEl.innerHTML = \`
+        <span class="pill">Sessions: <span class="ok">\${s.sessions||0}</span></span>
+        <span class="pill">Total minutes: <span class="ok">\${s.totalMin||0}</span></span>
+        \${s.last ? \`<span class="pill">Last: \${new Date(s.last).toLocaleString()}</span>\` : ''}
+      \`;
+    }catch(e){
+      statsEl.textContent = '';
+    }
+  }
+
+  // Settings persistence
+  const LS2 = {
+    k: 'bb_settings_v2',
+    read(){ try{ return JSON.parse(localStorage.getItem(this.k) || '{}') } catch(e){ return {} } },
     write(d){ localStorage.setItem(this.k, JSON.stringify(d)) },
-    bump(mins){
+    save(){
+      this.write({
+        workStart: workStartEl.value,
+        workEnd: workEndEl.value,
+        breakEvery: parseInt(breakEveryEl.value,10),
+        stretchLead: parseInt(stretchLeadEl.value,10),
+        reminderStyle: reminderStyleEl.value
+      });
+    },
+    load(){
       const s = this.read();
-      s.sessions = (s.sessions||0) + 1;
-      s.totalMin = (s.totalMin||0) + mins;
-      s.last = new Date().toISOString();
-      this.write(s); renderStats();
+      if(s.workStart) workStartEl.value = s.workStart;
+      if(s.workEnd) workEndEl.value = s.workEnd;
+      if(s.breakEvery) breakEveryEl.value = s.breakEvery;
+      if(Number.isInteger(s.stretchLead)) stretchLeadEl.value = s.stretchLead;
+      if(s.reminderStyle) reminderStyleEl.value = s.reminderStyle;
     }
   };
 
-  function renderStats(){
-    const s = store.read();
-    statsEl.innerHTML = `
-      <div>Sessions: <span style="color:#5ee4a7">${s.sessions||0}</span></div>
-      <div>Total minutes: <span style="color:#5ee4a7">${s.totalMin||0}</span></div>
-      ${s.last ? `<div>Last: <span>${new Date(s.last).toLocaleString()}</span></div>` : ''}
-    `;
-  }
-  renderStats();
-
+  // ----- Helpers
   function fmt(sec){
     sec = Math.max(0, Math.round(sec));
-    const m = Math.floor(sec/60), s = sec%60;
-    return `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+    const m = Math.floor(sec / 60);
+    const s = sec % 60;
+    return \`\${String(m).padStart(2,'0')}:\${String(s).padStart(2,'0')}\`;
   }
-
   function setPhase(newPhase, ms){
     phase = newPhase;
     stage.dataset.phase = (newPhase === 'hold' ? 'hold' : newPhase);
     phaseEl.textContent = (newPhase === 'hold') ? 'Hold' : (newPhase.charAt(0).toUpperCase() + newPhase.slice(1));
-    pacer.style.setProperty('--phase-ms', (ms||1000)+'ms');
+    pacer.style.setProperty('--phase-ms', (ms||1000) + 'ms');
 
     if(mantraOn){
       if(modeEl.value === 'hongsau'){
@@ -224,17 +308,13 @@
       chime(newPhase === 'exhale' ? 523.25 : (newPhase === 'done' ? 784 : 392));
     }
   }
-
   function computePattern(){
     const m = modeEl.value;
-    if(m === 'hongsau'){ return [{phase:'inhale', secs:4.5},{phase:'exhale', secs:5.5}] }
-    if(m === 'box'){ return [{phase:'inhale', secs:4},{phase:'hold', secs:4},{phase:'exhale', secs:4},{phase:'hold', secs:4}] }
-    if(m === '478'){ return [{phase:'inhale', secs:4},{phase:'hold', secs:7},{phase:'exhale', secs:8}] }
-    return [{phase:'inhale', secs:4},{phase:'exhale', secs:4}]; // equal
+    if(m === 'hongsau'){ return [{phase:'inhale', secs:4.5}, {phase:'exhale', secs:5.5}] }
+    if(m === 'box'){ return [{phase:'inhale', secs:4}, {phase:'hold', secs:4}, {phase:'exhale', secs:4}, {phase:'hold', secs:4}] }
+    if(m === '478'){ return [{phase:'inhale', secs:4}, {phase:'hold', secs:7}, {phase:'exhale', secs:8}] }
+    return [{phase:'inhale', secs:4}, {phase:'exhale', secs:4}];
   }
-
-  function updateDurationLabel(){ durationLabel.textContent = durationEl.value }
-
   function resetSession(){
     running = false;
     startPauseBtn.textContent = '▶ Start';
@@ -248,11 +328,10 @@
     progressEl.textContent = '0%';
     timerEl.textContent = fmt(remaining);
   }
-
   function tick(now){
     if(!running) return;
     if(!lastTick) lastTick = now;
-    const dt = (now - lastTick)/1000;
+    const dt = (now - lastTick) / 1000;
     lastTick = now;
 
     remaining -= dt;
@@ -264,12 +343,19 @@
       statusEl.textContent = 'Complete';
       progressEl.textContent = '100%';
       timerEl.textContent = fmt(remaining);
-      store.bump(Math.round(sessionSeconds/60));
+      try{
+        const s = JSON.parse(localStorage.getItem('bb_stats_v1') || '{}');
+        s.sessions = (s.sessions||0) + 1;
+        s.totalMin = (s.totalMin||0) + Math.round(sessionSeconds/60);
+        s.last = new Date().toISOString();
+        localStorage.setItem('bb_stats_v1', JSON.stringify(s));
+        renderStats();
+      }catch(e){}
       return;
     }
     timerEl.textContent = fmt(remaining);
     const pct = ((sessionSeconds - remaining)/sessionSeconds) * 100;
-    progressEl.textContent = `${Math.min(100, Math.floor(pct))}%`;
+    progressEl.textContent = \`\${Math.min(100, Math.floor(pct))}%\`;
 
     if(phaseRemaining <= 0){
       const idx = (pattern._idx || 0) % pattern.length;
@@ -282,10 +368,15 @@
     requestAnimationFrame(tick);
   }
 
+  // Audio / Voice
   let audioCtx = null;
+  function ensureAudio(){
+    if(!audioCtx) audioCtx = new (window.AudioContext||window.webkitAudioContext)();
+    if(audioCtx.state === 'suspended'){ audioCtx.resume(); }
+  }
   function chime(freq=392){
     try{
-      if(!audioCtx) audioCtx = new (window.AudioContext||window.webkitAudioContext)();
+      ensureAudio();
       const o = audioCtx.createOscillator();
       const g = audioCtx.createGain();
       o.type='sine'; o.frequency.value=freq;
@@ -297,8 +388,72 @@
       o.start(now); o.stop(now + 0.36);
     }catch(e){}
   }
+  function speak(text){
+    try{
+      const msg = new SpeechSynthesisUtterance(text);
+      msg.rate = 1; msg.pitch = 1; msg.volume = 1;
+      window.speechSynthesis.cancel();
+      window.speechSynthesis.speak(msg);
+    }catch(e){}
+  }
+  function announce(text){
+    const style = reminderStyleEl.value;
+    if(style === 'voice'){ speak(text) }
+    else if(style === 'chime'){ chime(660); setTimeout(()=>chime(523.25), 250) }
+    else { speak(text); setTimeout(()=>chime(660), 200) } // both
+  }
 
+  // Workday scheduling
+  function parseTimeToToday(tstr){
+    const [hh, mm] = tstr.split(':').map(x=>parseInt(x,10));
+    const d = new Date();
+    d.setHours(hh, mm||0, 0, 0);
+    return d;
+  }
+  function inWorkWindow(now){
+    const start = parseTimeToToday(workStartEl.value);
+    const end = parseTimeToToday(workEndEl.value);
+    if(end <= start){
+      const end2 = new Date(end.getTime()+24*3600*1000);
+      return (now >= start) || (now < end2);
+    }
+    return now >= start && now <= end;
+  }
+  function scheduleNextBreak(base){
+    const intervalMin = Math.max(1, parseInt(breakEveryEl.value, 10));
+    const next = new Date((base || new Date()).getTime() + intervalMin*60000);
+    nextBreakAt = next;
+    const leadMin = Math.max(0, parseInt(stretchLeadEl.value, 10));
+    nextStretchAt = new Date(next.getTime() - leadMin*60000);
+    nextBreakLabel.textContent = next.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+  }
+  function schedulerLoop(){
+    if(!workActive){ return; }
+    const now = new Date();
+    if(!inWorkWindow(now)){
+      workStatus.textContent = 'outside work hours';
+      workStatus.className = 'warn';
+      nextBreakLabel.textContent = '—';
+      return;
+    }else{
+      workStatus.textContent = 'active';
+      workStatus.className = 'ok';
+    }
+    if(!nextBreakAt){ scheduleNextBreak(now); }
+
+    if(nextStretchAt && now >= nextStretchAt){
+      announce('Time to stand and stretch.');
+      nextStretchAt = null; // prevent repeat
+    }
+    if(nextBreakAt && now >= nextBreakAt){
+      announce('Break time. Stand, stretch, then begin your breathing practice.');
+      scheduleNextBreak(now);
+    }
+  }
+
+  // Events
   startPauseBtn.addEventListener('click', () => {
+    ensureAudio();
     if(!running){
       if(remaining <= 0){ resetSession(); }
       running = true;
@@ -312,11 +467,10 @@
       startPauseBtn.textContent = '▶ Resume';
     }
   });
-
   resetBtn.addEventListener('click', resetSession);
   modeEl.addEventListener('change', () => { pattern = computePattern() });
   durationEl.addEventListener('input', () => {
-    updateDurationLabel();
+    durationLabel.textContent = durationEl.value;
     if(!running){
       sessionSeconds = parseInt(durationEl.value,10)*60;
       remaining = sessionSeconds;
@@ -325,6 +479,7 @@
     }
   });
   soundBtn.addEventListener('click', () => {
+    ensureAudio();
     soundOn = !soundOn;
     soundBtn.setAttribute('aria-pressed', String(soundOn));
     soundBtn.textContent = soundOn ? '🔔 Chime: On' : '🔔 Chime: Off';
@@ -337,27 +492,50 @@
     mantraEl.style.display = mantraOn ? 'block' : 'none';
   });
 
+  // Work controls
+  ;[workStartEl, workEndEl, breakEveryEl, stretchLeadEl, reminderStyleEl].forEach(el => {
+    el.addEventListener('change', () => { LS2.save(); if(workActive){ scheduleNextBreak(new Date()); } });
+  });
+  startWorkBtn.addEventListener('click', () => {
+    ensureAudio();
+    workActive = true;
+    LS2.save();
+    scheduleNextBreak(new Date());
+    workStatus.textContent = 'active'; workStatus.className = 'ok';
+    if(!schedulerTimer){ schedulerTimer = setInterval(schedulerLoop, 500); }
+  });
+  stopWorkBtn.addEventListener('click', () => {
+    workActive = false;
+    workStatus.textContent = 'stopped'; workStatus.className = 'warn';
+    nextBreakAt = null; nextStretchAt = null; nextBreakLabel.textContent = '—';
+    if(schedulerTimer){ clearInterval(schedulerTimer); schedulerTimer = null; }
+  });
+  testReminderBtn.addEventListener('click', () => { ensureAudio(); announce('This is a test announcement.'); });
+
+  // Keyboard shortcuts
   window.addEventListener('keydown', (e) => {
     if(e.code === 'Space'){ e.preventDefault(); startPauseBtn.click(); }
     if(e.key.toLowerCase() === 'r'){ e.preventDefault(); resetBtn.click(); }
   });
 
+  // Restore posture checklist
   for(let i=1;i<=6;i++){
     const el = document.getElementById('p'+i);
     const key = 'bb_posture_'+i;
     el.checked = localStorage.getItem(key) === '1';
-    el.addEventListener('change', () => {
-      localStorage.setItem(key, el.checked ? '1' : '0');
-    });
+    el.addEventListener('change', () => { localStorage.setItem(key, el.checked ? '1' : '0'); });
   }
 
+  // Init
+  function updateDurationLabel(){ durationLabel.textContent = durationEl.value }
   updateDurationLabel();
   resetSession();
+  renderStats();
+  LS2.load();
 
+  // Register SW
   if('serviceWorker' in navigator){
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('./service-worker.js').catch(()=>{});
-    });
+    window.addEventListener('load', () => { navigator.serviceWorker.register('./service-worker.js').catch(()=>{}); });
   }
   setTimeout(() => { statusEl.textContent = 'Ready — choose a mode and press Start' }, 800);
 })();
