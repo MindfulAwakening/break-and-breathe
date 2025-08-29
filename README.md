@@ -1,13 +1,11 @@
-# Break & Breathe — v2.6
+# Break & Breathe — v2.9.0
 
-### Fixes
-- **Clicks blocked**: pacer area is now `pointer-events: none`, so header/controls are always clickable.
-- **Chrome voices silent**: added explicit **Unlock Audio** button, improved voice loading/polling, removed over-aggressive cancel, and added **Use Default Voice** fallback.
-- **Voice status**: shows how many voices were loaded.
+- Session length range: **1–60 minutes** (step 1)
+- High-contrast dropdowns for Mode & Voices
+- Versioned Service Worker (auto updates, clears old caches)
+- All prior voice + click fixes
 
-### Keep
-- Voice picker + quick female/male pick
-- Voice controls: Rate, Pitch, Volume (persisted)
-- Guided Voice cues and “It is time to take a break.” reminders
-- Work Hours, recurring breaks, stretch pre-alert
-- PWA offline support
+## Deploy on GitHub Pages
+1) Add these files to the repo root and commit.
+2) Open your Pages site and **hard refresh** (Ctrl/Cmd+Shift+R).
+3) If you still see an old version: DevTools → Application → Service Workers → **Unregister**, then refresh.
