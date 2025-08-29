@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Break & Breathe — v2.8.0</title>
+<title>Break & Breathe — v2.9.0</title>
 <meta name="theme-color" content="#0b1324" />
 <link rel="manifest" href="manifest.webmanifest" />
 <style>
@@ -26,6 +26,17 @@
   select,input[type="range"],input[type="time"],input[type="number"],.btn{
     width:100%;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.03);color:var(--text);
     border-radius:12px;padding:8px 10px;font-size:14px;outline:none}
+  /* High-contrast dropdowns */
+  select{
+    border:1px solid rgba(255,255,255,.15);
+    background: rgba(18,28,52,.95);
+    color: #e8f0ff;
+    appearance: none;
+  }
+  select option{
+    background:#121c34;
+    color:#e8f0ff;
+  }
   .btn{cursor:pointer;text-align:center;user-select:none;transition:transform .05s ease}
   .btn:active{transform:translateY(1px)}
   .btn.primary{background:linear-gradient(180deg,rgba(138,209,255,.18),rgba(138,209,255,.08));border-color:rgba(138,209,255,.35)}
@@ -56,7 +67,7 @@
   <div class="app">
     <div class="card">
       <header>
-        <div class="title">🧘‍♂️ Break &amp; Breathe <span class="badge">MVP v2.8.0</span></div>
+        <div class="title">🧘‍♂️ Break &amp; Breathe <span class="badge">MVP v2.9.0</span></div>
         <div class="muted">Space = start/pause · R = reset</div>
       </header>
 
@@ -72,7 +83,7 @@
         </div>
         <div>
           <label for="duration">Session Length: <span id="durationLabel">20</span> min</label>
-          <input type="range" id="duration" min="1" max="60" step="1" value="10" />
+          <input type="range" id="duration" min="1" max="60" step="1" value="20" />
         </div>
         <div>
           <label>Sound, Mantra &amp; Guidance</label>
@@ -350,10 +361,10 @@
   // Init
   resetSession(); loadVoices(20);
 
-  // Versioned Service Worker (prevents stale cache)
+  // Versioned Service Worker
   if('serviceWorker' in navigator){
     window.addEventListener('load', ()=>{
-      navigator.serviceWorker.register('./service-worker.js?v=2.8.0')
+      navigator.serviceWorker.register('./service-worker.js?v=2.9.0')
         .then(reg => { if(reg.waiting) reg.waiting.postMessage({type:'SKIP_WAITING'}); })
         .catch(()=>{});
     });
@@ -362,4 +373,3 @@
 </script>
 </body>
 </html>
-
