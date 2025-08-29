@@ -1,5 +1,5 @@
-// v2.8.0 Service Worker
-const VERSION = 'v2.8.0';
+// v2.9.0 Service Worker
+const VERSION = 'v2.9.0';
 const CACHE = 'bb-cache-' + VERSION;
 const ASSETS = ['./','./index.html','./manifest.webmanifest'];
 
@@ -31,3 +31,4 @@ self.addEventListener('fetch', (event) => {
     }).catch(() => caches.match('./index.html')))
   );
 });
+
