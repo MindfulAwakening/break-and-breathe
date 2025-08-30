@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Break & Breathe — v2.9.0</title>
+<title>Break & Breathe — v3.0.0</title>
 <meta name="theme-color" content="#0b1324" />
 <link rel="manifest" href="manifest.webmanifest" />
 <style>
@@ -23,7 +23,7 @@
   .controls{position:relative;z-index:10;display:grid;grid-template-columns:1.2fr 1fr 1.1fr 1fr;gap:12px;margin:8px 0 6px;pointer-events:auto}
   @media (max-width:820px){.controls{grid-template-columns:1fr 1fr}.grid{grid-template-columns:1fr}}
   label{font-size:12px;color:var(--muted);display:block;margin-bottom:6px}
-  select,input[type="range"],input[type="time"],input[type="number"],.btn{
+  select,input[type="range"],input[type="time"],input[type="number"],input[type="password"],input[type="text"],.btn{
     width:100%;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.03);color:var(--text);
     border-radius:12px;padding:8px 10px;font-size:14px;outline:none}
   /* High-contrast dropdowns */
@@ -33,10 +33,7 @@
     color: #e8f0ff;
     appearance: none;
   }
-  select option{
-    background:#121c34;
-    color:#e8f0ff;
-  }
+  select option{background:#121c34;color:#e8f0ff;}
   .btn{cursor:pointer;text-align:center;user-select:none;transition:transform .05s ease}
   .btn:active{transform:translateY(1px)}
   .btn.primary{background:linear-gradient(180deg,rgba(138,209,255,.18),rgba(138,209,255,.08));border-color:rgba(138,209,255,.35)}
@@ -67,7 +64,7 @@
   <div class="app">
     <div class="card">
       <header>
-        <div class="title">🧘‍♂️ Break &amp; Breathe <span class="badge">MVP v2.9.0</span></div>
+        <div class="title">🧘‍♂️ Break &amp; Breathe <span class="badge">MVP v3.0.0</span></div>
         <div class="muted">Space = start/pause · R = reset</div>
       </header>
 
@@ -112,20 +109,8 @@
           <div class="timer" id="timer">20:00</div>
         </div>
 
-        <!-- RIGHT: posture + scheduling + voice -->
+        <!-- RIGHT: scheduling + voice (Posture Check removed) -->
         <div>
-          <div class="section">
-            <h3>Posture Check</h3>
-            <div class="two-col">
-              <label><input type="checkbox" id="p1"> Feet grounded / sit bones rooted</label>
-              <label><input type="checkbox" id="p2"> Spine tall; chin gently tucked</label>
-              <label><input type="checkbox" id="p3"> Shoulders down; chest soft</label>
-              <label><input type="checkbox" id="p4"> Jaw unclenched; tongue relaxed</label>
-              <label><input type="checkbox" id="p5"> Eyes soft; inward gaze</label>
-              <label><input type="checkbox" id="p6"> Hands resting comfortably</label>
-            </div>
-          </div>
-
           <div class="section">
             <h3>Work Hours & Break Reminders</h3>
             <div class="two-col">
@@ -157,35 +142,75 @@
           </div>
 
           <div class="section">
-            <h3>Voice Settings & Voices</h3>
+            <h3>Voice Settings</h3>
+
             <div class="two-col">
               <div>
-                <label for="voiceSelect">Choose Voice</label>
+                <label for="voiceSource">Voice Source</label>
+                <select id="voiceSource">
+                  <option value="browser">Browser TTS</option>
+                  <option value="elA">ElevenLabs A</option>
+                  <option value="elB">ElevenLabs B</option>
+                </select>
+                <div class="muted" style="margin-top:4px">Pick ElevenLabs A/B for premium voices.</div>
+              </div>
+
+              <div id="browserVoiceBlock">
+                <label for="voiceSelect">Browser Voice</label>
                 <select id="voiceSelect"></select>
                 <div class="muted" id="voiceStatus" style="margin-top:4px">Loading voices…</div>
+              </div>
+            </div>
+
+            <div class="two-col" id="elCreds" style="margin-top:8px; display:none">
+              <div>
+                <label for="elApiKey">ElevenLabs API Key</label>
+                <input id="elApiKey" type="password" placeholder="Paste your API key" />
               </div>
               <div>
                 <label>&nbsp;</label>
                 <div class="row">
-                  <button id="saySample" class="btn ghost">🔊 Try Sample</button>
-                  <button id="reloadVoices" class="btn ghost">↻ Reload Voices</button>
-                  <button id="unlockAudio" class="btn ghost">🔓 Unlock Audio</button>
-                  <button id="useDefault" class="btn ghost">✔ Use Default</button>
+                  <button id="saveElCreds" class="btn ghost">💾 Save</button>
+                  <button id="clearElCreds" class="btn ghost">🗑 Clear</button>
                 </div>
               </div>
             </div>
+
+            <div class="two-col" id="elVoices" style="margin-top:8px; display:none">
+              <div>
+                <label for="elVoiceA">Voice A ID</label>
+                <input id="elVoiceA" type="text" placeholder="e.g. 21m00Tcm4TlvDq8ikWAM" />
+                <div class="row" style="margin-top:6px">
+                  <button id="testElA" class="btn ghost">🔊 Test A</button>
+                </div>
+              </div>
+              <div>
+                <label for="elVoiceB">Voice B ID</label>
+                <input id="elVoiceB" type="text" placeholder="Paste your voice ID" />
+                <div class="row" style="margin-top:6px">
+                  <button id="testElB" class="btn ghost">🔊 Test B</button>
+                </div>
+              </div>
+            </div>
+
             <div class="two-col" style="margin-top:8px">
               <div><label>Rate (speed): <span id="rateLbl">0.9</span></label><input id="voiceRate" type="range" min="0.6" max="1.4" step="0.05" value="0.9"></div>
               <div><label>Pitch: <span id="pitchLbl">1.0</span></label><input id="voicePitch" type="range" min="0.7" max="1.3" step="0.05" value="1.0"></div>
             </div>
             <div class="two-col" style="margin-top:8px">
               <div><label>Volume: <span id="volLbl">1.0</span></label><input id="voiceVol" type="range" min="0.2" max="1.0" step="0.05" value="1.0"></div>
+              <div class="row" style="align-items:end">
+                <button id="saySample" class="btn ghost">🔊 Try Sample</button>
+                <button id="reloadVoices" class="btn ghost">↻ Reload Browser Voices</button>
+                <button id="unlockAudio" class="btn ghost">🔓 Unlock Audio</button>
+                <button id="useDefault" class="btn ghost">✔ Use Default</button>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      <footer class="muted">Auto-updating PWA. If you ever see stale content, refresh to activate the new version.</footer>
+      <footer class="muted">If your site is public, don’t hard-code your ElevenLabs key. Enter it above or use a proxy.</footer>
     </div>
   </div>
 
@@ -194,22 +219,41 @@
   'use strict';
   const $=id=>document.getElementById(id);
 
+  // Core elements
   const modeEl=$('mode'), durationEl=$('duration'), durationLabel=$('durationLabel');
   const startPauseBtn=$('startPause'), resetBtn=$('reset'), soundBtn=$('sound'), mantraBtn=$('mantraBtn'), guidedBtn=$('guidedBtn');
-  const stage=$('stage'), pacer=$('pacer'), timerEl=$('timer'), phaseEl=$('phase'), mantraEl=$('mantra'), statusEl=$('status'), progressEl=$('progress');
+  const stage=$('stage'), timerEl=$('timer'), phaseEl=$('phase'), mantraEl=$('mantra'), statusEl=$('status'), progressEl=$('progress');
 
+  // Scheduler
   const workStartEl=$('workStart'), workEndEl=$('workEnd'), breakEveryEl=$('breakEvery'), stretchLeadEl=$('stretchLead'), reminderStyleEl=$('reminderStyle');
   const startWorkBtn=$('startWork'), stopWorkBtn=$('stopWork'), nextBreakLabel=$('nextBreakLabel'), workStatus=$('workStatus'), testReminderBtn=$('testReminder');
 
-  const voiceSelect=$('voiceSelect'), voiceStatus=$('voiceStatus'), saySample=$('saySample'), reloadVoicesBtn=$('reloadVoices'), unlockAudioBtn=$('unlockAudio'), useDefaultBtn=$('useDefault');
-  const voiceRate=$('voiceRate'), voicePitch=$('voicePitch'), voiceVol=$('voiceVol'), rateLbl=$('rateLbl'), pitchLbl=$('pitchLbl'), volLbl=$('volLbl');
+  // Voice (browser + ElevenLabs)
+  const voiceSource=$('voiceSource');
+  const browserVoiceBlock=$('browserVoiceBlock');
+  const elCreds=$('elCreds'), elVoices=$('elVoices');
+  const voiceSelect=$('voiceSelect'), voiceStatus=$('voiceStatus');
+  const elApiKey=$('elApiKey'), saveElCreds=$('saveElCreds'), clearElCreds=$('clearElCreds');
+  const elVoiceA=$('elVoiceA'), elVoiceB=$('elVoiceB'), testElA=$('testElA'), testElB=$('testElB');
 
+  const voiceRate=$('voiceRate'), voicePitch=$('voicePitch'), voiceVol=$('voiceVol'), rateLbl=$('rateLbl'), pitchLbl=$('pitchLbl'), volLbl=$('volLbl');
+  const saySample=$('saySample'), reloadVoicesBtn=$('reloadVoices'), unlockAudioBtn=$('unlockAudio'), useDefaultBtn=$('useDefault');
+
+  // State
   let running=false, sessionSeconds=parseInt(durationEl.value,10)*60, remaining=sessionSeconds, lastTick=null;
   let phase='ready', phaseRemaining=0, pattern=[];
   let soundOn=false, mantraOn=true, guidedOn=true;
   let workActive=false, nextBreakAt=null, nextStretchAt=null, schedulerTimer=null;
   let voices=[], selectedVoiceName='', audioCtx=null;
 
+  // Local storage helpers
+  const LS = {
+    get(k){ try{return localStorage.getItem(k)}catch(_){return null} },
+    set(k,v){ try{localStorage.setItem(k,v)}catch(_){} },
+    del(k){ try{localStorage.removeItem(k)}catch(_){} }
+  };
+
+  // UI helpers
   const fmt=sec=>{sec=Math.max(0,Math.round(sec));const m=Math.floor(sec/60),s=sec%60;return `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;};
   const computePattern=()=>{const m=modeEl.value;
     if(m==='hongsau')return[{phase:'inhale',secs:4.5},{phase:'exhale',secs:5.5}];
@@ -258,7 +302,7 @@
     phaseRemaining-=dt; requestAnimationFrame(tick);
   }
 
-  // Audio / Voice
+  // ==== AUDIO / VOICES ====
   function ensureAudio(){ if(!audioCtx) audioCtx=new (window.AudioContext||window.webkitAudioContext)(); if(audioCtx.state==='suspended') audioCtx.resume(); }
   function chime(freq=392){
     try{
@@ -272,7 +316,9 @@
   }
   const voiceParams=()=>({rate:parseFloat(voiceRate.value),pitch:parseFloat(voicePitch.value),vol:parseFloat(voiceVol.value)});
   const getSelectedVoice=()=>{ if(!voices.length||!selectedVoiceName) return null; return voices.find(v=>v.name===selectedVoiceName)||null; };
-  function speak(text){
+
+  // Browser TTS
+  function speakBrowser(text){
     try{
       const msg=new SpeechSynthesisUtterance(text);
       const p=voiceParams(); const v=getSelectedVoice();
@@ -280,14 +326,45 @@
       window.speechSynthesis.speak(msg);
     }catch(e){}
   }
-  function announce(text){
-    const style=reminderStyleEl.value;
-    if(style==='voice'){ speak(text) }
-    else if(style==='chime'){ chime(660); setTimeout(()=>chime(523.25),250) }
-    else { speak(text); setTimeout(()=>chime(660),200) }
+
+  // ElevenLabs TTS (simple: returns audio/mpeg blob and plays it)
+  async function speakElevenLabs(text, which='A'){
+    const key = LS.get('EL_API_KEY') || (elApiKey.value||'').trim();
+    const voiceId = (which==='A' ? (LS.get('EL_VOICE_A')||elVoiceA.value) : (LS.get('EL_VOICE_B')||elVoiceB.value) || '').trim();
+    if(!key || !voiceId){ alert('Please set ElevenLabs API Key and Voice ID.'); return; }
+    const body = {
+      text,
+      model_id: "eleven_monolingual_v1",
+      voice_settings: { stability: 0.6, similarity_boost: 0.85 }
+    };
+    try{
+      const res = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`, {
+        method: 'POST',
+        headers: { 'xi-api-key': key, 'Content-Type':'application/json', 'Accept':'audio/mpeg' },
+        body: JSON.stringify(body)
+      });
+      if(!res.ok){ throw new Error('TTS failed: ' + res.status); }
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = new Audio(url);
+      a.volume = voiceParams().vol;
+      await a.play().catch(()=>{});
+      setTimeout(()=> URL.revokeObjectURL(url), 10000);
+    }catch(err){
+      console.error(err);
+      alert('ElevenLabs error. Check your key/voice ID and network.');
+    }
   }
 
-  // Workday scheduling
+  // Unified speak()
+  function speak(text){
+    const src = voiceSource.value;
+    if(src==='browser'){ speakBrowser(text); }
+    else if(src==='elA'){ speakElevenLabs(text,'A'); }
+    else if(src==='elB'){ speakElevenLabs(text,'B'); }
+  }
+
+  // ==== Workday reminders ====
   const parseTime=t=>{ const [hh,mm]=t.split(':').map(v=>parseInt(v,10)); const d=new Date(); d.setHours(hh,mm||0,0,0); return d; };
   const inWorkWindow=now=>{
     const s=parseTime(workStartEl.value), e=parseTime(workEndEl.value);
@@ -302,6 +379,12 @@
     nextStretchAt=new Date(next.getTime()-lead*60000);
     nextBreakLabel.textContent=next.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
   }
+  function announce(text){
+    const style=reminderStyleEl.value;
+    if(style==='voice'){ speak(text) }
+    else if(style==='chime'){ chime(660); setTimeout(()=>chime(523.25),250) }
+    else { speak(text); setTimeout(()=>chime(660),200) }
+  }
   function schedulerLoop(){
     if(!workActive) return;
     const now=new Date();
@@ -312,7 +395,7 @@
     if(nextBreakAt && now>=nextBreakAt){ announce('It is time to take a break.'); scheduleNextBreak(now); }
   }
 
-  // Voices
+  // ==== Browser voice loading ====
   function fillVoiceSelect(){
     voiceSelect.innerHTML='';
     voices.forEach(v=>{
@@ -338,7 +421,7 @@
     voices = window.speechSynthesis.getVoices(); fillVoiceSelect();
   }
 
-  // Wire UI
+  // ==== Wire UI ====
   startPauseBtn.addEventListener('click',()=>{ ensureAudio(); if(!running){ if(remaining<=0) resetSession(); running=true; statusEl.textContent='In session'; pattern=computePattern(); requestAnimationFrame(t=>{lastTick=t; tick(t)}); startPauseBtn.textContent='⏸ Pause'; } else { running=false; statusEl.textContent='Paused'; startPauseBtn.textContent='▶ Resume'; } });
   resetBtn.addEventListener('click', resetSession);
   durationEl.addEventListener('input', ()=>{ durationLabel.textContent=durationEl.value; if(!running){ sessionSeconds=parseInt(durationEl.value,10)*60; remaining=sessionSeconds; timerEl.textContent=fmt(remaining); progressEl.textContent='0%'; }});
@@ -352,11 +435,36 @@
   stopWorkBtn.addEventListener('click', ()=>{ workActive=false; workStatus.textContent='stopped'; workStatus.className='warn'; nextBreakAt=null; nextStretchAt=null; nextBreakLabel.textContent='—'; if(schedulerTimer){ clearInterval(schedulerTimer); schedulerTimer=null; } });
   testReminderBtn.addEventListener('click', ()=>{ ensureAudio(); announce('It is time to take a break.'); });
 
-  voiceSelect.addEventListener('change', ()=>{ selectedVoiceName=voiceSelect.value; speak('Voice selected'); });
+  // Browser voices
+  voiceSelect.addEventListener('change', ()=>{ selectedVoiceName=voiceSelect.value; speakBrowser('Voice selected'); });
   saySample.addEventListener('click', ()=>{ ensureAudio(); speak('This is your guided voice sample.'); });
   reloadVoicesBtn.addEventListener('click', ()=>{ loadVoices(20); voiceStatus.textContent='Reloading voices…'; });
   unlockAudioBtn.addEventListener('click', ()=>{ ensureAudio(); try{ window.speechSynthesis.speak(new SpeechSynthesisUtterance('Audio unlocked')); }catch(e){} });
-  useDefaultBtn.addEventListener('click', ()=>{ selectedVoiceName=''; speak('Using default voice'); });
+  useDefaultBtn.addEventListener('click', ()=>{ selectedVoiceName=''; speakBrowser('Using default voice'); });
+
+  // Voice source UI toggles + creds
+  function updateVoiceSourceUI(){
+    const src = voiceSource.value;
+    const showEL = (src==='elA'||src==='elB');
+    browserVoiceBlock.style.display = (src==='browser') ? 'block' : 'none';
+    elCreds.style.display = showEL ? 'grid' : 'none';
+    elVoices.style.display = showEL ? 'grid' : 'none';
+  }
+  voiceSource.addEventListener('change', updateVoiceSourceUI);
+  updateVoiceSourceUI();
+
+  // Load saved creds
+  (function restoreSaved(){
+    const key = LS.get('EL_API_KEY'); if(key) elApiKey.value = key;
+    const vA = LS.get('EL_VOICE_A'); if(vA) elVoiceA.value = vA;
+    const vB = LS.get('EL_VOICE_B'); if(vB) elVoiceB.value = vB;
+  })();
+
+  saveElCreds.addEventListener('click', ()=>{ if(elApiKey.value) LS.set('EL_API_KEY', elApiKey.value); if(elVoiceA.value) LS.set('EL_VOICE_A', elVoiceA.value); if(elVoiceB.value) LS.set('EL_VOICE_B', elVoiceB.value); alert('Saved locally (this browser only).'); });
+  clearElCreds.addEventListener('click', ()=>{ LS.del('EL_API_KEY'); LS.del('EL_VOICE_A'); LS.del('EL_VOICE_B'); elApiKey.value=''; elVoiceA.value=''; elVoiceB.value=''; alert('Cleared.'); });
+
+  testElA.addEventListener('click', ()=> speakElevenLabs('This is ElevenLabs Voice A test. Smooth and calm.', 'A'));
+  testElB.addEventListener('click', ()=> speakElevenLabs('This is ElevenLabs Voice B test. Warm and gentle.', 'B'));
 
   // Init
   resetSession(); loadVoices(20);
@@ -364,7 +472,7 @@
   // Versioned Service Worker
   if('serviceWorker' in navigator){
     window.addEventListener('load', ()=>{
-      navigator.serviceWorker.register('./service-worker.js?v=2.9.0')
+      navigator.serviceWorker.register('./service-worker.js?v=3.0.0')
         .then(reg => { if(reg.waiting) reg.waiting.postMessage({type:'SKIP_WAITING'}); })
         .catch(()=>{});
     });
@@ -373,3 +481,4 @@
 </script>
 </body>
 </html>
+
