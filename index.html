@@ -1,1 +1,130 @@
-<!DOCTYPE html><html><head><meta charset='utf-8'><title>Break & Breathe v3.1</title></head><body><h1>Stub v3.1</h1></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Break & Breathe — v3.3 (Female Voice)</title>
+<meta name="theme-color" content="#0b1324" />
+<style>
+  :root{--bg:#0b1324;--card:#121c34;--accent:#8ad1ff;--text:#e8f0ff;--muted:#a9b8d6}
+  body{margin:0;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial,"Noto Sans";
+       background:var(--bg);color:var(--text);padding:18px}
+  .wrap{max-width:900px;margin:0 auto}
+  .card{background:linear-gradient(180deg,rgba(18,28,52,.92),rgba(13,20,38,.95));
+        border:1px solid rgba(255,255,255,.06);border-radius:14px;padding:16px}
+  h2{margin:0 0 8px}
+  .section{margin-top:12px;padding:12px;border:1px solid rgba(255,255,255,.06);border-radius:12px;background:rgba(255,255,255,.04)}
+  label{font-size:13px;color:var(--muted);display:block;margin:6px 0}
+  input[type="text"],input[type="range"]{width:100%;padding:8px 10px;border-radius:10px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.05);color:var(--text)}
+  .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  .btn{padding:8px 12px;border-radius:10px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.06);color:var(--text);cursor:pointer}
+  .btn.primary{background:linear-gradient(180deg,rgba(138,209,255,.2),rgba(138,209,255,.08));border-color:rgba(138,209,255,.35)}
+  .muted{color:var(--muted);font-size:12px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="card">
+    <h2>🧘 Break & Breathe — v3.3 (Female Voice)</h2>
+
+    <div class="section">
+      <p class="muted">
+        This build uses a single **Female** ElevenLabs voice via your proxy. Set the two values in <b>OWNER_CONFIG</b> below:
+        <code>PROXY_URL</code> and <code>VOICE_FEMALE</code>.
+      </p>
+    </div>
+
+    <div class="section">
+      <h3>Voice Controls</h3>
+      <div class="section">
+        <label>Rate (speed): <span id="rateLbl">1.0</span></label>
+        <input id="voiceRate" type="range" min="0.6" max="1.4" step="0.05" value="1.0" />
+
+        <label>Pitch: <span id="pitchLbl">1.0</span></label>
+        <input id="voicePitch" type="range" min="0.7" max="1.3" step="0.05" value="1.0" />
+
+        <label>Volume: <span id="volLbl">1.0</span></label>
+        <input id="voiceVol" type="range" min="0.2" max="1.0" step="0.05" value="1.0" />
+      </div>
+
+      <div class="section">
+        <label for="testPhrase">Test phrase</label>
+        <input id="testPhrase" type="text" value="It is time to take a break" />
+        <div class="row" style="margin-top:8px">
+          <button id="speakTest" class="btn primary">🔊 Speak</button>
+          <span id="status" class="muted">Ready</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ==========================================================
+   OWNER CONFIG — EDIT THESE TWO LINES
+   ========================================================== */
+const OWNER_CONFIG = {
+  PROXY_URL: 'https://bb-proxy-9l5eensmz-genes-projects-48ad06f8.vercel.app/api/tts',   // <-- put YOUR Vercel URL here
+  VOICE_FEMALE: 'LcfcDJNUP1GQjkzn1xUU'                  // <-- put the ElevenLabs Voice ID here
+};
+/* ========================================================== */
+
+const $ = id => document.getElementById(id);
+
+// sliders live labels
+['voiceRate','voicePitch','voiceVol'].forEach(id=>{
+  $(id).addEventListener('input',()=>{
+    if(id==='voiceRate') $('rateLbl').textContent=$(id).value;
+    if(id==='voicePitch') $('pitchLbl').textContent=$(id).value;
+    if(id==='voiceVol') $('volLbl').textContent=$(id).value;
+  });
+});
+
+// Helper: call your proxy to get audio and play it
+async function speakViaProxy(text){
+  const status=$('status');
+  const PROXY_URL = OWNER_CONFIG.PROXY_URL.trim();
+  const VOICE_ID  = OWNER_CONFIG.VOICE_FEMALE.trim();
+
+  if(!PROXY_URL){ status.textContent='Please set PROXY_URL in OWNER_CONFIG'; return; }
+  if(!VOICE_ID){ status.textContent='Please set VOICE_FEMALE in OWNER_CONFIG'; return; }
+
+  status.textContent='Requesting audio…';
+  try{
+    const res = await fetch(PROXY_URL, {
+      method:'POST',
+      headers:{ 'Content-Type':'application/json' },
+      body: JSON.stringify({
+        text,
+        voiceId: VOICE_ID,
+        // Optional knobs (you can customize in your proxy to use these)
+        model_id: 'eleven_monolingual_v1',
+        voice_settings: { stability: 0.6, similarity_boost: 0.85 }
+      })
+    });
+    if(!res.ok){ status.textContent='Proxy error '+res.status; return; }
+
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+
+    const audio = new Audio(url);
+    audio.volume = parseFloat(($('voiceVol').value||'1'));
+    // Note: ElevenLabs MP3 is pre-rendered; browser 'rate'/'pitch' don't apply to MP3 playback.
+    // If you want sliders to affect *phrases during sessions*, adjust text pacing or use SSML via your proxy.
+    await audio.play().catch(()=>{});
+    setTimeout(()=>URL.revokeObjectURL(url), 10000);
+    status.textContent='Played ✔';
+  }catch(e){
+    console.error(e);
+    status.textContent='Network error';
+  }
+}
+
+// test button
+$('speakTest').addEventListener('click', ()=>{
+  const phrase = ($('testPhrase').value||'Testing voice').trim();
+  speakViaProxy(phrase);
+});
+</script>
+</body>
+</html>
